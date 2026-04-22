@@ -53,6 +53,8 @@
     .slot-header { display: flex; align-items: center; justify-content: space-between; }
     .slot-label { font-weight: 600; font-size: 14px; color: #18181b; }
     .slot-time { font-size: 12px; color: #52525b; font-family: monospace; }
+    .cal-btn { background: none; border: none; cursor: pointer; font-size: 15px; padding: 0 0 0 6px; opacity: 0.4; transition: opacity 0.15s; line-height: 1; }
+    .cal-btn:hover { opacity: 1; }
     .visitor-row { display: flex; align-items: center; gap: 8px; }
     .visitor-label { font-size: 12px; color: #52525b; width: 54px; flex-shrink: 0; font-weight: 500; }
     .visitor-select { flex: 1; background: #ffffff; border: 1px solid #e4e4e7; border-radius: 8px; padding: 6px 10px; font-size: 14px; color: #18181b; font-family: inherit; cursor: pointer; outline: none; appearance: none; }
@@ -283,6 +285,36 @@
       ...s.tasks.filter(t=>t.completed).sort(by),
     ];
   }
+  const SLOT_TIMES = { morning:{s:'0745',e:'0830'}, noon:{s:'1300',e:'1400'}, evening:{s:'1800',e:'1900'} };
+
+  function addToCalendar(dateKey, slotKey) {
+    const {label} = SLOTS[slotKey];
+    const {s: st, e: et} = SLOT_TIMES[slotKey];
+    const dt = dateKey.replace(/-/g,'');
+    const day = getDay(dateKey);
+    const names = (day[slotKey]||[]).filter(Boolean).join(', ');
+    const desc = names ? `מבקרים: ${names}` : '';
+    const uid = `${dateKey}-${slotKey}@ima-visits`;
+    const ics = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//ima-visits//HE',
+      'BEGIN:VEVENT',
+      `UID:${uid}`,
+      `DTSTART;TZID=Asia/Jerusalem:${dt}T${st}00`,
+      `DTEND;TZID=Asia/Jerusalem:${dt}T${et}00`,
+      `SUMMARY:ביקור אמא – ${label}`,
+      ...(desc ? [`DESCRIPTION:${desc}`] : []),
+      'END:VEVENT',
+      'END:VCALENDAR',
+    ].join('\r\n');
+    const blob = new Blob([ics], {type:'text/calendar;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `ביקור-${dateKey}-${slotKey}.ics`; a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
   function esc(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
   // ── Render ─────────────────────────────────────────────────────────────────
@@ -356,8 +388,9 @@
       const opts = PEOPLE.filter(p=>p!==ex1&&p!==ex2).map(p=>`<option value="${p}"${p===val?' selected':''}>${p}</option>`).join('');
       return `<select class="visitor-select" data-date="${dateKey}" data-slot="${slotKey}" data-idx="${idx}"><option value="">—</option>${opts}</select>`;
     };
+    const calBtn = !ro ? `<button class="cal-btn" data-cal-date="${dateKey}" data-cal-slot="${slotKey}" title="הוסף לתזכורת">📅</button>` : '';
     return `<div class="slot-card">
-      <div class="slot-header"><span class="slot-label">${label}</span><span class="slot-time">${time}</span></div>
+      <div class="slot-header"><span class="slot-label">${label}</span><div style="display:flex;align-items:center"><span class="slot-time">${time}</span>${calBtn}</div></div>
       <div class="visitor-row"><span class="visitor-label">מבקר 1</span>${dd(0,v0,v1,v2)}</div>
       <div class="visitor-row"><span class="visitor-label">מבקר 2</span>${dd(1,v1,v0,v2)}</div>
       <div class="visitor-row"><span class="visitor-label" style="color:#a1a1aa;font-weight:400">גם יכול</span>${dd(2,v2,v0,v1)}</div>
@@ -504,6 +537,8 @@
     }));
     document.querySelectorAll('[data-cancel-task]').forEach(b => b.addEventListener('click', () => { s.editingTaskId=null; render(); }));
     document.querySelectorAll('[data-del-task]').forEach(b => b.addEventListener('click', () => deleteTask(b.dataset.delTask)));
+
+    document.querySelectorAll('[data-cal-date]').forEach(b => b.addEventListener('click', () => addToCalendar(b.dataset.calDate, b.dataset.calSlot)));
   }
 
   // ── Init ───────────────────────────────────────────────────────────────────

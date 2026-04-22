@@ -58,7 +58,8 @@
     .slot-header { display: flex; align-items: center; justify-content: space-between; }
     .slot-label { font-weight: 600; font-size: 14px; color: #18181b; }
     .slot-time { font-size: 12px; color: #52525b; font-family: monospace; }
-    .cal-btn { background: none; border: none; cursor: pointer; font-size: 15px; padding: 0 0 0 6px; opacity: 1; line-height: 1; }
+    .cal-btn { background: none; border: none; cursor: pointer; font-size: 12px; color: #52525b; font-family: inherit; padding: 0; transition: color 0.15s; }
+    .cal-btn:hover { color: #f97316; }
     .visitor-row { display: flex; align-items: center; gap: 8px; }
     .visitor-label { font-size: 12px; color: #52525b; width: 54px; flex-shrink: 0; font-weight: 500; }
     .visitor-select { flex: 1; background: #ffffff; border: 1px solid #e4e4e7; border-radius: 8px; padding: 6px 10px; font-size: 14px; color: #18181b; font-family: inherit; cursor: pointer; outline: none; appearance: none; }
@@ -396,9 +397,9 @@
       const opts = PEOPLE.filter(p=>p!==ex1&&p!==ex2).map(p=>`<option value="${p}"${p===val?' selected':''}>${p}</option>`).join('');
       return `<select class="visitor-select" data-date="${dateKey}" data-slot="${slotKey}" data-idx="${idx}"><option value="">—</option>${opts}</select>`;
     };
-    const calBtn = !ro ? `<button class="cal-btn" data-cal-date="${dateKey}" data-cal-slot="${slotKey}" title="הוסף לתזכורת">📅</button>` : '';
+    const calBtn = !ro ? `<button class="cal-btn" data-cal-date="${dateKey}" data-cal-slot="${slotKey}">הוסף ללוח שנה</button>` : '';
     return `<div class="slot-card">
-      <div class="slot-header"><span class="slot-label">${label}</span><div style="display:flex;align-items:center"><span class="slot-time">${time}</span>${calBtn}</div></div>
+      <div class="slot-header"><div style="display:flex;align-items:center;gap:6px"><span class="slot-label">${label}</span><span class="slot-time">${time}</span></div>${calBtn}</div>
       <div class="visitor-row"><span class="visitor-label">מבקר 1</span>${dd(0,v0,v1,v2)}</div>
       <div class="visitor-row"><span class="visitor-label">מבקר 2</span>${dd(1,v1,v0,v2)}</div>
       <div class="visitor-row"><span class="visitor-label" style="color:#a1a1aa;font-weight:400">גם יכול</span>${dd(2,v2,v0,v1)}</div>

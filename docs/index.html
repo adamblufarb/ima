@@ -506,7 +506,11 @@
     await loadAll();
     s.loading=false;
     render();
-    setInterval(async () => { await loadAll(); render(); }, 15000);
+    setInterval(async () => {
+      const editing = s.addingNote || s.addingTask || s.editingNoteId || s.editingDayNote;
+      await loadAll();
+      if (!editing) render();
+    }, 15000);
   }
 
   init();

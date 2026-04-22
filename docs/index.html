@@ -13,7 +13,6 @@
       min-height: 100vh;
       direction: rtl;
     }
-
     header {
       background: #ffffff;
       border-bottom: 1px solid #e4e4e7;
@@ -32,7 +31,6 @@
       gap: 12px;
     }
     h1 { font-size: 18px; font-weight: 700; color: #27272a; }
-
     .tab-group {
       display: flex;
       border-radius: 12px;
@@ -61,24 +59,16 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 18px;
-      height: 18px;
+      width: 18px; height: 18px;
       background: rgba(255,255,255,0.25);
       border-radius: 50%;
       font-size: 11px;
     }
-    .tab-btn:not([class*="active"]) .archive-badge {
-      background: #e4e4e7;
-      color: #52525b;
-    }
+    .tab-btn:not([class*="active"]) .archive-badge { background: #e4e4e7; color: #52525b; }
+    main { max-width: 640px; margin: 0 auto; padding: 20px 16px; }
 
-    main {
-      max-width: 640px;
-      margin: 0 auto;
-      padding: 20px 16px;
-    }
+    .loading { text-align: center; padding: 60px 16px; color: #a1a1aa; font-size: 15px; }
 
-    /* Day card */
     .day-card {
       background: #ffffff;
       border: 1px solid #e4e4e7;
@@ -94,16 +84,8 @@
     .day-card-header { display: flex; align-items: center; gap: 8px; }
     .day-title { font-weight: 700; font-size: 15px; color: #3f3f46; }
     .day-card.today .day-title { color: #047857; }
-    .today-badge {
-      font-size: 11px;
-      background: #059669;
-      color: white;
-      padding: 2px 8px;
-      border-radius: 20px;
-      font-weight: 500;
-    }
+    .today-badge { font-size: 11px; background: #059669; color: white; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
 
-    /* Slot card */
     .slot-card {
       background: #f4f4f5;
       border: 1px solid #e4e4e7;
@@ -132,16 +114,10 @@
       appearance: none;
     }
     .visitor-select:focus { border-color: #34d399; }
-    .visitor-readonly {
-      flex: 1;
-      font-size: 14px;
-      padding: 6px 10px;
-      border-radius: 8px;
-    }
+    .visitor-readonly { flex: 1; font-size: 14px; padding: 6px 10px; border-radius: 8px; }
     .visitor-readonly.filled { background: #d1fae5; border: 1px solid #6ee7b7; color: #047857; }
     .visitor-readonly.empty { color: #a1a1aa; font-style: italic; }
 
-    /* Notes */
     .note-card {
       background: #ffffff;
       border: 1px solid #e4e4e7;
@@ -155,41 +131,15 @@
     }
     .note-card.pinned { background: #fff7ed; border-color: #fdba74; }
     .note-card-top { display: flex; align-items: center; justify-content: space-between; }
-    .pin-btn {
-      font-size: 22px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      line-height: 1;
-      padding: 0;
-      opacity: 0.2;
-      transition: opacity 0.15s, transform 0.15s;
-    }
+    .pin-btn { font-size: 22px; background: none; border: none; cursor: pointer; line-height: 1; padding: 0; opacity: 0.2; transition: opacity 0.15s, transform 0.15s; }
     .pin-btn:hover { opacity: 0.5; }
     .pin-btn.pinned { opacity: 1; transform: scale(1.1); }
-    .note-edit-btn {
-      font-size: 12px;
-      background: none;
-      border: none;
-      color: #a1a1aa;
-      cursor: pointer;
-      font-family: inherit;
-      transition: color 0.15s;
-    }
+    .note-edit-btn { font-size: 12px; background: none; border: none; color: #a1a1aa; cursor: pointer; font-family: inherit; transition: color 0.15s; }
     .note-edit-btn:hover { color: #f97316; }
     .note-text { font-size: 14px; color: #3f3f46; line-height: 1.6; white-space: pre-wrap; }
-    .note-meta {
-      border-top: 1px solid #f4f4f5;
-      padding-top: 8px;
-      font-size: 12px;
-      color: #a1a1aa;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
+    .note-meta { border-top: 1px solid #f4f4f5; padding-top: 8px; font-size: 12px; color: #a1a1aa; display: flex; flex-direction: column; gap: 2px; }
     .note-meta .author { color: #52525b; font-weight: 500; }
 
-    /* Add note */
     .add-note-btn {
       width: 100%;
       padding: 12px;
@@ -209,7 +159,6 @@
       margin-bottom: 14px;
     }
     .add-note-btn:hover { border-color: #f97316; color: #f97316; }
-
     .note-form {
       background: #ffffff;
       border: 1px solid #fdba74;
@@ -221,7 +170,6 @@
       margin-bottom: 14px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     }
-
     textarea {
       width: 100%;
       background: #f4f4f5;
@@ -237,7 +185,6 @@
     }
     textarea:focus { border-color: #fb923c; }
     textarea::placeholder { color: #a1a1aa; }
-
     select.author-select {
       width: 100%;
       background: #f4f4f5;
@@ -252,129 +199,126 @@
       appearance: none;
     }
     select.author-select:focus { border-color: #fb923c; }
-
     .btn-row { display: flex; gap: 8px; }
-    .btn-primary {
-      flex: 1;
-      padding: 8px 16px;
-      background: #f97316;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background 0.15s;
-      font-family: inherit;
-    }
+    .btn-primary { flex: 1; padding: 8px 16px; background: #f97316; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s; font-family: inherit; }
     .btn-primary:hover { background: #fb923c; }
-    .btn-secondary {
-      padding: 8px 14px;
-      background: #f4f4f5;
-      color: #52525b;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      cursor: pointer;
-      transition: background 0.15s;
-      font-family: inherit;
-    }
+    .btn-secondary { padding: 8px 14px; background: #f4f4f5; color: #52525b; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; transition: background 0.15s; font-family: inherit; }
     .btn-secondary:hover { background: #e4e4e7; }
-    .btn-danger {
-      padding: 8px 14px;
-      background: #fef2f2;
-      color: #ef4444;
-      border: 1px solid #fecaca;
-      border-radius: 8px;
-      font-size: 14px;
-      cursor: pointer;
-      transition: background 0.15s;
-      font-family: inherit;
-    }
+    .btn-danger { padding: 8px 14px; background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; border-radius: 8px; font-size: 14px; cursor: pointer; transition: background 0.15s; font-family: inherit; }
     .btn-danger:hover { background: #fee2e2; }
-
     .empty-state { text-align: center; padding: 48px 16px; color: #a1a1aa; }
     .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
   </style>
 </head>
 <body>
 <div id="app"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  const PEOPLE = ['שרון','ארם','איתמר','אדם','אורי','אילן','אלה'];
-  const SLOTS = {
-    morning: { label: 'בוקר',    time: '07:45–08:30' },
-    noon:    { label: 'צהריים',  time: '13:00–14:00' },
-    evening: { label: 'ערב',     time: '18:00–19:00' },
-  };
+  const SUPABASE_URL = 'https://dhdfyycqmepzregkkymy.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRoZGZ5eWNxbWVwenJlZ2treW15Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4NzQ3NTMsImV4cCI6MjA5MjQ1MDc1M30.VXECtDHeixLPvPv3WdSarQ_ZwWvtO4OrxIqVBDC4Q-A';
+  const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  const PEOPLE    = ['שרון','ארם','איתמר','אדם','אורי','אילן','אלה'];
+  const SLOTS     = { morning:{label:'בוקר',time:'07:45–08:30'}, noon:{label:'צהריים',time:'13:00–14:00'}, evening:{label:'ערב',time:'18:00–19:00'} };
   const SLOT_KEYS = ['morning','noon','evening'];
   const HE_DAYS   = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
   const HE_MONTHS = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
 
-  // ── State ──────────────────────────────────────────────────────────────────
-  const s = {
-    tab: 'visits',
-    schedule: {},
-    notes: [],
-    addingNote: false,
-    editingNoteId: null,
-  };
+  const s = { tab:'visits', schedule:{}, notes:[], loading:true, addingNote:false, editingNoteId:null };
 
-  // ── Persistence ────────────────────────────────────────────────────────────
-  function loadAll() {
-    try { s.schedule = JSON.parse(localStorage.getItem('ima-schedule') || '{}'); } catch { s.schedule = {}; }
-    try { s.notes    = JSON.parse(localStorage.getItem('ima-notes')    || '[]'); } catch { s.notes = []; }
-  }
-  function saveSchedule() { localStorage.setItem('ima-schedule', JSON.stringify(s.schedule)); }
-  function saveNotes()    { localStorage.setItem('ima-notes',    JSON.stringify(s.notes));    }
+  // ── Supabase ───────────────────────────────────────────────────────────────
 
-  // ── Date helpers ───────────────────────────────────────────────────────────
-  function toKey(d) {
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  }
-  function todayKey() { return toKey(new Date()); }
-  function weekKeys() {
-    return Array.from({length:7}, (_,i) => { const d=new Date(); d.setDate(d.getDate()+i); return toKey(d); });
-  }
-  function isToday(k)  { return k === todayKey(); }
-  function isPast(k)   { return k < todayKey(); }
-  function fmtDate(k) {
-    const d = new Date(k + 'T12:00:00');
-    return `יום ${HE_DAYS[d.getDay()]}, ${d.getDate()} ב${HE_MONTHS[d.getMonth()]}`;
-  }
-  function fmtTime(iso) {
-    const d = new Date(iso);
-    return `${d.getDate()} ב${HE_MONTHS[d.getMonth()]}, ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  function rowsToSchedule(rows) {
+    const out = {};
+    for (const r of rows) {
+      if (!out[r.date_key]) out[r.date_key] = { morning:[], noon:[], evening:[] };
+      out[r.date_key][r.slot_key] = [r.visitor_0||'', r.visitor_1||''];
+    }
+    return out;
   }
 
-  // ── Schedule helpers ───────────────────────────────────────────────────────
-  function getDay(k) { return s.schedule[k] || {morning:[],noon:[],evening:[]}; }
-  function setVisitor(dateKey, slotKey, idx, name) {
+  async function loadAll() {
+    const [{ data: sched }, { data: notes }] = await Promise.all([
+      db.from('schedule').select('*'),
+      db.from('notes').select('*').order('created_at'),
+    ]);
+    s.schedule = rowsToSchedule(sched || []);
+    s.notes    = notes || [];
+  }
+
+  async function setVisitor(dateKey, slotKey, idx, name) {
     const day  = getDay(dateKey);
     const slot = [day[slotKey]?.[0]||'', day[slotKey]?.[1]||''];
     slot[idx]  = name;
     if (slot[0] && slot[0] === slot[1]) slot[1-idx] = '';
     s.schedule = { ...s.schedule, [dateKey]: { ...day, [slotKey]: slot } };
-    saveSchedule();
+    render();
+    await db.from('schedule').upsert({ date_key:dateKey, slot_key:slotKey, visitor_0:slot[0], visitor_1:slot[1] });
   }
 
+  async function addNote(text, author) {
+    const note = { id:Date.now().toString(), text, author, created_at:new Date().toISOString(), pinned:false };
+    s.notes.push(note);
+    s.addingNote = false;
+    render();
+    await db.from('notes').insert(note);
+  }
+
+  async function togglePin(id) {
+    const n = s.notes.find(n=>n.id===id);
+    if (!n) return;
+    n.pinned = !n.pinned;
+    render();
+    await db.from('notes').update({ pinned:n.pinned }).eq('id', id);
+  }
+
+  async function saveEdit(id, text) {
+    const n = s.notes.find(n=>n.id===id);
+    if (!n||!text) return;
+    n.text = text; n.edited_at = new Date().toISOString();
+    s.editingNoteId = null;
+    render();
+    await db.from('notes').update({ text, edited_at:n.edited_at }).eq('id', id);
+  }
+
+  async function deleteNote(id) {
+    s.notes = s.notes.filter(n=>n.id!==id);
+    s.editingNoteId = null;
+    render();
+    await db.from('notes').delete().eq('id', id);
+  }
+
+  // ── Date helpers ───────────────────────────────────────────────────────────
+
+  function toKey(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+  function todayKey() { return toKey(new Date()); }
+  function weekKeys() { return Array.from({length:7},(_,i)=>{ const d=new Date(); d.setDate(d.getDate()+i); return toKey(d); }); }
+  function isToday(k) { return k===todayKey(); }
+  function isPast(k)  { return k<todayKey(); }
+  function fmtDate(k) { const d=new Date(k+'T12:00:00'); return `יום ${HE_DAYS[d.getDay()]}, ${d.getDate()} ב${HE_MONTHS[d.getMonth()]}`; }
+  function fmtTime(iso) { const d=new Date(iso); return `${d.getDate()} ב${HE_MONTHS[d.getMonth()]}, ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; }
+
+  // ── Schedule helpers ───────────────────────────────────────────────────────
+
+  function getDay(k) { return s.schedule[k] || {morning:[],noon:[],evening:[]}; }
+
   // ── Notes helpers ──────────────────────────────────────────────────────────
+
   function sortedNotes() {
-    const byDate = (a,b) => a.createdAt.localeCompare(b.createdAt);
+    const byDate = (a,b) => a.created_at.localeCompare(b.created_at);
     return [...s.notes.filter(n=>n.pinned).sort(byDate), ...s.notes.filter(n=>!n.pinned).sort(byDate)];
   }
 
-  // ── HTML helpers ───────────────────────────────────────────────────────────
-  function esc(str) {
-    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
   // ── Render ─────────────────────────────────────────────────────────────────
+
+  function esc(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
   function render() {
-    document.getElementById('app').innerHTML = html();
+    document.getElementById('app').innerHTML = htmlApp();
     bind();
   }
 
-  function html() {
+  function htmlApp() {
     const archiveDates = Object.keys(s.schedule).filter(isPast).sort((a,b)=>b.localeCompare(a));
     return `
       <header>
@@ -390,50 +334,42 @@
         </div>
       </header>
       <main>
-        ${s.tab==='visits'  ? htmlVisits() : ''}
-        ${s.tab==='archive' ? htmlArchive(archiveDates) : ''}
-        ${s.tab==='notes'   ? htmlNotes() : ''}
+        ${s.loading ? '<div class="loading">טוען...</div>' : ''}
+        ${!s.loading && s.tab==='visits'  ? htmlVisits() : ''}
+        ${!s.loading && s.tab==='archive' ? htmlArchive(archiveDates) : ''}
+        ${!s.loading && s.tab==='notes'   ? htmlNotes() : ''}
       </main>`;
   }
 
-  function htmlVisits() { return weekKeys().map(k => htmlDay(k, false)).join(''); }
+  function htmlVisits() { return weekKeys().map(k=>htmlDay(k,false)).join(''); }
   function htmlArchive(dates) {
     if (!dates.length) return `<div class="empty-state"><div class="icon">📁</div><p>אין ביקורים בארכיון עדיין</p></div>`;
-    return dates.map(k => htmlDay(k, true)).join('');
+    return dates.map(k=>htmlDay(k,true)).join('');
   }
-
-  function htmlDay(k, readOnly) {
+  function htmlDay(k, ro) {
     const day = getDay(k);
-    return `
-      <div class="day-card ${isToday(k)?'today':''}">
-        <div class="day-card-header">
-          <span class="day-title">${fmtDate(k)}</span>
-          ${isToday(k)?'<span class="today-badge">היום</span>':''}
-        </div>
-        ${SLOT_KEYS.map(sk => htmlSlot(k, sk, day[sk]||[], readOnly)).join('')}
-      </div>`;
+    return `<div class="day-card ${isToday(k)?'today':''}">
+      <div class="day-card-header">
+        <span class="day-title">${fmtDate(k)}</span>
+        ${isToday(k)?'<span class="today-badge">היום</span>':''}
+      </div>
+      ${SLOT_KEYS.map(sk=>htmlSlot(k,sk,day[sk]||[],ro)).join('')}
+    </div>`;
   }
-
-  function htmlSlot(dateKey, slotKey, visitors, readOnly) {
-    const {label, time} = SLOTS[slotKey];
-    const v0 = visitors[0]||'', v1 = visitors[1]||'';
-    const dropdown = (idx, val, excl) => {
-      if (readOnly) return `<span class="visitor-readonly ${val?'filled':'empty'}">${val||'—'}</span>`;
+  function htmlSlot(dateKey, slotKey, visitors, ro) {
+    const {label,time} = SLOTS[slotKey];
+    const v0=visitors[0]||'', v1=visitors[1]||'';
+    const dd = (idx,val,excl) => {
+      if (ro) return `<span class="visitor-readonly ${val?'filled':'empty'}">${val||'—'}</span>`;
       const opts = PEOPLE.filter(p=>p!==excl).map(p=>`<option value="${p}"${p===val?' selected':''}>${p}</option>`).join('');
-      return `<select class="visitor-select" data-date="${dateKey}" data-slot="${slotKey}" data-idx="${idx}">
-        <option value="">—</option>${opts}</select>`;
+      return `<select class="visitor-select" data-date="${dateKey}" data-slot="${slotKey}" data-idx="${idx}"><option value="">—</option>${opts}</select>`;
     };
-    return `
-      <div class="slot-card">
-        <div class="slot-header">
-          <span class="slot-label">${label}</span>
-          <span class="slot-time">${time}</span>
-        </div>
-        <div class="visitor-row"><span class="visitor-label">מבקר 1</span>${dropdown(0,v0,v1)}</div>
-        <div class="visitor-row"><span class="visitor-label">מבקר 2</span>${dropdown(1,v1,v0)}</div>
-      </div>`;
+    return `<div class="slot-card">
+      <div class="slot-header"><span class="slot-label">${label}</span><span class="slot-time">${time}</span></div>
+      <div class="visitor-row"><span class="visitor-label">מבקר 1</span>${dd(0,v0,v1)}</div>
+      <div class="visitor-row"><span class="visitor-label">מבקר 2</span>${dd(1,v1,v0)}</div>
+    </div>`;
   }
-
   function htmlNotes() {
     const notes = sortedNotes();
     const form = s.addingNote
@@ -449,94 +385,80 @@
            </div>
          </div>`
       : `<button class="add-note-btn" id="nb"><span style="font-size:18px">+</span> פתק חדש</button>`;
-
     const cards = notes.length
-      ? notes.map(n => htmlNote(n)).join('')
+      ? notes.map(n=>htmlNote(n)).join('')
       : `<div class="empty-state"><div class="icon">📝</div><p>אין פתקים עדיין</p></div>`;
-
     return form + cards;
   }
-
   function htmlNote(n) {
-    const editing = s.editingNoteId === n.id;
-    return `
-      <div class="note-card ${n.pinned?'pinned':''}" data-nid="${n.id}">
-        <div class="note-card-top">
-          <button class="pin-btn ${n.pinned?'pinned':''}" data-pin="${n.id}"
-            title="${n.pinned?'הסר פין':'הצמד למעלה'}">📌</button>
-          ${!editing?`<button class="note-edit-btn" data-edit="${n.id}">ערוך</button>`:''}
-        </div>
-        ${editing
-          ? `<textarea id="et-${n.id}" rows="3">${esc(n.text)}</textarea>
-             <div class="btn-row">
-               <button class="btn-primary" data-save="${n.id}">שמור</button>
-               <button class="btn-secondary" data-cancel="${n.id}">ביטול</button>
-               <button class="btn-danger" data-del="${n.id}">מחק</button>
-             </div>`
-          : `<p class="note-text">${esc(n.text)}</p>`}
-        <div class="note-meta">
-          <span>נוסף ע״י <span class="author">${esc(n.author)}</span> · ${fmtTime(n.createdAt)}</span>
-          ${n.editedAt?`<span>נערך לאחרונה: ${fmtTime(n.editedAt)}</span>`:''}
-        </div>
-      </div>`;
+    const editing = s.editingNoteId===n.id;
+    return `<div class="note-card ${n.pinned?'pinned':''}">
+      <div class="note-card-top">
+        <button class="pin-btn ${n.pinned?'pinned':''}" data-pin="${n.id}" title="${n.pinned?'הסר פין':'הצמד למעלה'}">📌</button>
+        ${!editing?`<button class="note-edit-btn" data-edit="${n.id}">ערוך</button>`:''}
+      </div>
+      ${editing
+        ? `<textarea id="et-${n.id}" rows="3">${esc(n.text)}</textarea>
+           <div class="btn-row">
+             <button class="btn-primary" data-save="${n.id}">שמור</button>
+             <button class="btn-secondary" data-cancel="${n.id}">ביטול</button>
+             <button class="btn-danger" data-del="${n.id}">מחק</button>
+           </div>`
+        : `<p class="note-text">${esc(n.text)}</p>`}
+      <div class="note-meta">
+        <span>נוסף ע״י <span class="author">${esc(n.author)}</span> · ${fmtTime(n.created_at)}</span>
+        ${n.edited_at?`<span>נערך לאחרונה: ${fmtTime(n.edited_at)}</span>`:''}
+      </div>
+    </div>`;
   }
 
   // ── Bind events ────────────────────────────────────────────────────────────
+
   function bind() {
-    // Tabs
     document.querySelectorAll('[data-tab]').forEach(b =>
       b.addEventListener('click', () => { s.tab=b.dataset.tab; s.addingNote=false; s.editingNoteId=null; render(); }));
 
-    // Visitor dropdowns
     document.querySelectorAll('.visitor-select').forEach(sel =>
-      sel.addEventListener('change', () => { setVisitor(sel.dataset.date, sel.dataset.slot, +sel.dataset.idx, sel.value); render(); }));
+      sel.addEventListener('change', () => setVisitor(sel.dataset.date, sel.dataset.slot, +sel.dataset.idx, sel.value)));
 
-    // Add note
     document.getElementById('nb')?.addEventListener('click', () => { s.addingNote=true; render(); setTimeout(()=>document.getElementById('nt')?.focus(),0); });
 
-    // Save new note
     document.getElementById('ns')?.addEventListener('click', () => {
-      const text = document.getElementById('nt')?.value.trim();
-      const author = document.getElementById('na')?.value;
-      if (!text||!author) return;
-      s.notes.push({ id: Date.now().toString(), text, author, createdAt: new Date().toISOString(), pinned: false });
-      saveNotes(); s.addingNote=false; render();
+      const text=document.getElementById('nt')?.value.trim();
+      const author=document.getElementById('na')?.value;
+      if (text&&author) addNote(text, author);
     });
 
-    // Cancel new note
     document.getElementById('nc')?.addEventListener('click', () => { s.addingNote=false; render(); });
 
-    // Pin toggle
-    document.querySelectorAll('[data-pin]').forEach(b => b.addEventListener('click', () => {
-      const n = s.notes.find(n=>n.id===b.dataset.pin);
-      if (n) { n.pinned=!n.pinned; saveNotes(); render(); }
-    }));
+    document.querySelectorAll('[data-pin]').forEach(b => b.addEventListener('click', () => togglePin(b.dataset.pin)));
 
-    // Edit
     document.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', () => {
       s.editingNoteId=b.dataset.edit; render(); setTimeout(()=>document.getElementById(`et-${s.editingNoteId}`)?.focus(),0);
     }));
 
-    // Save edit
     document.querySelectorAll('[data-save]').forEach(b => b.addEventListener('click', () => {
-      const text = document.getElementById(`et-${b.dataset.save}`)?.value.trim();
-      const n = s.notes.find(n=>n.id===b.dataset.save);
-      if (n&&text) { n.text=text; n.editedAt=new Date().toISOString(); saveNotes(); }
-      s.editingNoteId=null; render();
+      const text=document.getElementById(`et-${b.dataset.save}`)?.value.trim();
+      if (text) saveEdit(b.dataset.save, text);
     }));
 
-    // Cancel edit
     document.querySelectorAll('[data-cancel]').forEach(b => b.addEventListener('click', () => { s.editingNoteId=null; render(); }));
 
-    // Delete
-    document.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', () => {
-      s.notes=s.notes.filter(n=>n.id!==b.dataset.del); saveNotes(); s.editingNoteId=null; render();
-    }));
+    document.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', () => deleteNote(b.dataset.del)));
   }
 
   // ── Init ───────────────────────────────────────────────────────────────────
-  loadAll();
-  render();
+
+  async function init() {
+    render();
+    await loadAll();
+    s.loading = false;
+    render();
+    // Sync with others every 15 seconds
+    setInterval(async () => { await loadAll(); render(); }, 15000);
+  }
+
+  init();
 </script>
 </body>
 </html>

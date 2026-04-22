@@ -208,7 +208,14 @@
       if (i !== idx && slot[i] && slot[i] === name) slot[i] = '';
     }
     s.schedule = { ...s.schedule, [dateKey]: { ...day, [slotKey]: slot } };
-    render();
+    // Don't re-render — the browser already set the chosen select's value.
+    // Just sync the other two selects in this slot (dedup clearing).
+    for (let i = 0; i < 3; i++) {
+      if (i !== idx) {
+        const el = document.querySelector(`.visitor-select[data-date="${dateKey}"][data-slot="${slotKey}"][data-idx="${i}"]`);
+        if (el) el.value = slot[i];
+      }
+    }
     pendingWrites++;
     await db.from('schedule').upsert(
       { date_key:dateKey, slot_key:slotKey, visitor_0:slot[0], visitor_1:slot[1], visitor_2:slot[2] },

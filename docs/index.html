@@ -234,8 +234,8 @@
     await db.from('notes').delete().eq('id', id);
   }
 
-  async function addTask(text, author) {
-    const t = { id:Date.now().toString(), text, author, created_at:new Date().toISOString(), completed:false, pinned:false };
+  async function addTask(text) {
+    const t = { id:Date.now().toString(), text, author:'', created_at:new Date().toISOString(), completed:false, pinned:false };
     s.tasks.push(t); s.addingTask=false; render();
     await db.from('tasks').insert(t);
   }
@@ -387,10 +387,6 @@
     const taskForm = s.addingTask ? `
       <div class="task-form">
         <textarea id="tt" rows="2" placeholder="מה צריך לעשות?"></textarea>
-        <select class="author-select" id="ta" dir="rtl">
-          <option value="">— מי מוסיף? —</option>
-          ${PEOPLE.map(p=>`<option>${p}</option>`).join('')}
-        </select>
         <div class="btn-row">
           <button class="btn-primary green" id="ts">שמור משימה</button>
           <button class="btn-secondary" id="tc">ביטול</button>
@@ -425,7 +421,7 @@
                <button class="btn-danger" data-del-task="${t.id}">מחק</button>
              </div>`
           : `<p class="task-text">${esc(t.text)}</p>`}
-        <div class="task-meta">נוסף ע״י <span class="author">${esc(t.author)}</span> · ${fmtTime(t.created_at)}</div>
+        <div class="task-meta">${fmtTime(t.created_at)}</div>
       </div>
       ${!editing ? `<button class="note-edit-btn" data-edit-task="${t.id}">ערוך</button>` : ''}
     </div>`;
@@ -479,8 +475,8 @@
 
     document.getElementById('tb')?.addEventListener('click', () => { s.addingTask=true; render(); setTimeout(()=>document.getElementById('tt')?.focus(),0); });
     document.getElementById('ts')?.addEventListener('click', () => {
-      const text=document.getElementById('tt')?.value.trim(), author=document.getElementById('ta')?.value;
-      if (text&&author) addTask(text,author);
+      const text=document.getElementById('tt')?.value.trim();
+      if (text) addTask(text);
     });
     document.getElementById('tc')?.addEventListener('click', () => { s.addingTask=false; render(); });
 

@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>מבקרים את אמא</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f4f4f5;
+      color: #27272a;
+      min-height: 100vh;
+      direction: rtl;
+    }
+
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid #e4e4e7;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .header-inner {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    h1 { font-size: 18px; font-weight: 700; color: #27272a; }
+
+    .tab-group {
+      display: flex;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #e4e4e7;
+    }
+    .tab-btn {
+      padding: 8px 14px;
+      border: none;
+      background: transparent;
+      color: #71717a;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: inherit;
+      transition: background 0.15s, color 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .tab-btn:hover { background: #f4f4f5; color: #27272a; }
+    .tab-btn.active-notes   { background: #f97316; color: white; }
+    .tab-btn.active-visits  { background: #059669; color: white; }
+    .tab-btn.active-archive { background: #71717a; color: white; }
+    .archive-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      background: rgba(255,255,255,0.25);
+      border-radius: 50%;
+      font-size: 11px;
+    }
+    .tab-btn:not([class*="active"]) .archive-badge {
+      background: #e4e4e7;
+      color: #52525b;
+    }
+
+    main {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 20px 16px;
+    }
+
+    /* Day card */
+    .day-card {
+      background: #ffffff;
+      border: 1px solid #e4e4e7;
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .day-card.today { background: #ecfdf5; border-color: #6ee7b7; }
+    .day-card-header { display: flex; align-items: center; gap: 8px; }
+    .day-title { font-weight: 700; font-size: 15px; color: #3f3f46; }
+    .day-card.today .day-title { color: #047857; }
+    .today-badge {
+      font-size: 11px;
+      background: #059669;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    /* Slot card */
+    .slot-card {
+      background: #f4f4f5;
+      border: 1px solid #e4e4e7;
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .slot-header { display: flex; align-items: center; justify-content: space-between; }
+    .slot-label { font-weight: 600; font-size: 14px; color: #3f3f46; }
+    .slot-time { font-size: 12px; color: #a1a1aa; font-family: monospace; }
+    .visitor-row { display: flex; align-items: center; gap: 8px; }
+    .visitor-label { font-size: 12px; color: #a1a1aa; width: 54px; flex-shrink: 0; }
+    .visitor-select {
+      flex: 1;
+      background: #ffffff;
+      border: 1px solid #e4e4e7;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 14px;
+      color: #3f3f46;
+      font-family: inherit;
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+    }
+    .visitor-select:focus { border-color: #34d399; }
+    .visitor-readonly {
+      flex: 1;
+      font-size: 14px;
+      padding: 6px 10px;
+      border-radius: 8px;
+    }
+    .visitor-readonly.filled { background: #d1fae5; border: 1px solid #6ee7b7; color: #047857; }
+    .visitor-readonly.empty { color: #a1a1aa; font-style: italic; }
+
+    /* Notes */
+    .note-card {
+      background: #ffffff;
+      border: 1px solid #e4e4e7;
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .note-card.pinned { background: #fff7ed; border-color: #fdba74; }
+    .note-card-top { display: flex; align-items: center; justify-content: space-between; }
+    .pin-btn {
+      font-size: 22px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0;
+      opacity: 0.2;
+      transition: opacity 0.15s, transform 0.15s;
+    }
+    .pin-btn:hover { opacity: 0.5; }
+    .pin-btn.pinned { opacity: 1; transform: scale(1.1); }
+    .note-edit-btn {
+      font-size: 12px;
+      background: none;
+      border: none;
+      color: #a1a1aa;
+      cursor: pointer;
+      font-family: inherit;
+      transition: color 0.15s;
+    }
+    .note-edit-btn:hover { color: #f97316; }
+    .note-text { font-size: 14px; color: #3f3f46; line-height: 1.6; white-space: pre-wrap; }
+    .note-meta {
+      border-top: 1px solid #f4f4f5;
+      padding-top: 8px;
+      font-size: 12px;
+      color: #a1a1aa;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .note-meta .author { color: #52525b; font-weight: 500; }
+
+    /* Add note */
+    .add-note-btn {
+      width: 100%;
+      padding: 12px;
+      border: 2px dashed #d4d4d8;
+      border-radius: 12px;
+      background: transparent;
+      color: #a1a1aa;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+      font-family: inherit;
+      margin-bottom: 14px;
+    }
+    .add-note-btn:hover { border-color: #f97316; color: #f97316; }
+
+    .note-form {
+      background: #ffffff;
+      border: 1px solid #fdba74;
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    textarea {
+      width: 100%;
+      background: #f4f4f5;
+      border: 1px solid #e4e4e7;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 14px;
+      color: #27272a;
+      font-family: inherit;
+      resize: none;
+      outline: none;
+      direction: rtl;
+    }
+    textarea:focus { border-color: #fb923c; }
+    textarea::placeholder { color: #a1a1aa; }
+
+    select.author-select {
+      width: 100%;
+      background: #f4f4f5;
+      border: 1px solid #e4e4e7;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 14px;
+      color: #3f3f46;
+      font-family: inherit;
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+    }
+    select.author-select:focus { border-color: #fb923c; }
+
+    .btn-row { display: flex; gap: 8px; }
+    .btn-primary {
+      flex: 1;
+      padding: 8px 16px;
+      background: #f97316;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s;
+      font-family: inherit;
+    }
+    .btn-primary:hover { background: #fb923c; }
+    .btn-secondary {
+      padding: 8px 14px;
+      background: #f4f4f5;
+      color: #52525b;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.15s;
+      font-family: inherit;
+    }
+    .btn-secondary:hover { background: #e4e4e7; }
+    .btn-danger {
+      padding: 8px 14px;
+      background: #fef2f2;
+      color: #ef4444;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.15s;
+      font-family: inherit;
+    }
+    .btn-danger:hover { background: #fee2e2; }
+
+    .empty-state { text-align: center; padding: 48px 16px; color: #a1a1aa; }
+    .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+  const PEOPLE = ['שרון','ארם','איתמר','אדם','אורי','אילן','אלה'];
+  const SLOTS = {
+    morning: { label: 'בוקר',    time: '07:45–08:30' },
+    noon:    { label: 'צהריים',  time: '13:00–14:00' },
+    evening: { label: 'ערב',     time: '18:00–19:00' },
+  };
+  const SLOT_KEYS = ['morning','noon','evening'];
+  const HE_DAYS   = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+  const HE_MONTHS = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+
+  // ── State ──────────────────────────────────────────────────────────────────
+  const s = {
+    tab: 'visits',
+    schedule: {},
+    notes: [],
+    addingNote: false,
+    editingNoteId: null,
+  };
+
+  // ── Persistence ────────────────────────────────────────────────────────────
+  function loadAll() {
+    try { s.schedule = JSON.parse(localStorage.getItem('ima-schedule') || '{}'); } catch { s.schedule = {}; }
+    try { s.notes    = JSON.parse(localStorage.getItem('ima-notes')    || '[]'); } catch { s.notes = []; }
+  }
+  function saveSchedule() { localStorage.setItem('ima-schedule', JSON.stringify(s.schedule)); }
+  function saveNotes()    { localStorage.setItem('ima-notes',    JSON.stringify(s.notes));    }
+
+  // ── Date helpers ───────────────────────────────────────────────────────────
+  function toKey(d) {
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+  function todayKey() { return toKey(new Date()); }
+  function weekKeys() {
+    return Array.from({length:7}, (_,i) => { const d=new Date(); d.setDate(d.getDate()+i); return toKey(d); });
+  }
+  function isToday(k)  { return k === todayKey(); }
+  function isPast(k)   { return k < todayKey(); }
+  function fmtDate(k) {
+    const d = new Date(k + 'T12:00:00');
+    return `יום ${HE_DAYS[d.getDay()]}, ${d.getDate()} ב${HE_MONTHS[d.getMonth()]}`;
+  }
+  function fmtTime(iso) {
+    const d = new Date(iso);
+    return `${d.getDate()} ב${HE_MONTHS[d.getMonth()]}, ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  }
+
+  // ── Schedule helpers ───────────────────────────────────────────────────────
+  function getDay(k) { return s.schedule[k] || {morning:[],noon:[],evening:[]}; }
+  function setVisitor(dateKey, slotKey, idx, name) {
+    const day  = getDay(dateKey);
+    const slot = [day[slotKey]?.[0]||'', day[slotKey]?.[1]||''];
+    slot[idx]  = name;
+    if (slot[0] && slot[0] === slot[1]) slot[1-idx] = '';
+    s.schedule = { ...s.schedule, [dateKey]: { ...day, [slotKey]: slot } };
+    saveSchedule();
+  }
+
+  // ── Notes helpers ──────────────────────────────────────────────────────────
+  function sortedNotes() {
+    const byDate = (a,b) => a.createdAt.localeCompare(b.createdAt);
+    return [...s.notes.filter(n=>n.pinned).sort(byDate), ...s.notes.filter(n=>!n.pinned).sort(byDate)];
+  }
+
+  // ── HTML helpers ───────────────────────────────────────────────────────────
+  function esc(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // ── Render ─────────────────────────────────────────────────────────────────
+  function render() {
+    document.getElementById('app').innerHTML = html();
+    bind();
+  }
+
+  function html() {
+    const archiveDates = Object.keys(s.schedule).filter(isPast).sort((a,b)=>b.localeCompare(a));
+    return `
+      <header>
+        <div class="header-inner">
+          <h1>מבקרים את אמא 🧡</h1>
+          <div class="tab-group">
+            <button class="tab-btn ${s.tab==='notes'?'active-notes':''}" data-tab="notes">הערות</button>
+            <button class="tab-btn ${s.tab==='visits'?'active-visits':''}" data-tab="visits">ביקורים</button>
+            <button class="tab-btn ${s.tab==='archive'?'active-archive':''}" data-tab="archive">
+              ארכיון${archiveDates.length?`<span class="archive-badge">${archiveDates.length}</span>`:''}
+            </button>
+          </div>
+        </div>
+      </header>
+      <main>
+        ${s.tab==='visits'  ? htmlVisits() : ''}
+        ${s.tab==='archive' ? htmlArchive(archiveDates) : ''}
+        ${s.tab==='notes'   ? htmlNotes() : ''}
+      </main>`;
+  }
+
+  function htmlVisits() { return weekKeys().map(k => htmlDay(k, false)).join(''); }
+  function htmlArchive(dates) {
+    if (!dates.length) return `<div class="empty-state"><div class="icon">📁</div><p>אין ביקורים בארכיון עדיין</p></div>`;
+    return dates.map(k => htmlDay(k, true)).join('');
+  }
+
+  function htmlDay(k, readOnly) {
+    const day = getDay(k);
+    return `
+      <div class="day-card ${isToday(k)?'today':''}">
+        <div class="day-card-header">
+          <span class="day-title">${fmtDate(k)}</span>
+          ${isToday(k)?'<span class="today-badge">היום</span>':''}
+        </div>
+        ${SLOT_KEYS.map(sk => htmlSlot(k, sk, day[sk]||[], readOnly)).join('')}
+      </div>`;
+  }
+
+  function htmlSlot(dateKey, slotKey, visitors, readOnly) {
+    const {label, time} = SLOTS[slotKey];
+    const v0 = visitors[0]||'', v1 = visitors[1]||'';
+    const dropdown = (idx, val, excl) => {
+      if (readOnly) return `<span class="visitor-readonly ${val?'filled':'empty'}">${val||'—'}</span>`;
+      const opts = PEOPLE.filter(p=>p!==excl).map(p=>`<option value="${p}"${p===val?' selected':''}>${p}</option>`).join('');
+      return `<select class="visitor-select" data-date="${dateKey}" data-slot="${slotKey}" data-idx="${idx}">
+        <option value="">—</option>${opts}</select>`;
+    };
+    return `
+      <div class="slot-card">
+        <div class="slot-header">
+          <span class="slot-label">${label}</span>
+          <span class="slot-time">${time}</span>
+        </div>
+        <div class="visitor-row"><span class="visitor-label">מבקר 1</span>${dropdown(0,v0,v1)}</div>
+        <div class="visitor-row"><span class="visitor-label">מבקר 2</span>${dropdown(1,v1,v0)}</div>
+      </div>`;
+  }
+
+  function htmlNotes() {
+    const notes = sortedNotes();
+    const form = s.addingNote
+      ? `<div class="note-form">
+           <textarea id="nt" rows="3" placeholder="מה חשוב לזכור?"></textarea>
+           <select class="author-select" id="na" dir="rtl">
+             <option value="">— מי מוסיף? —</option>
+             ${PEOPLE.map(p=>`<option>${p}</option>`).join('')}
+           </select>
+           <div class="btn-row">
+             <button class="btn-primary" id="ns">שמור פתק</button>
+             <button class="btn-secondary" id="nc">ביטול</button>
+           </div>
+         </div>`
+      : `<button class="add-note-btn" id="nb"><span style="font-size:18px">+</span> פתק חדש</button>`;
+
+    const cards = notes.length
+      ? notes.map(n => htmlNote(n)).join('')
+      : `<div class="empty-state"><div class="icon">📝</div><p>אין פתקים עדיין</p></div>`;
+
+    return form + cards;
+  }
+
+  function htmlNote(n) {
+    const editing = s.editingNoteId === n.id;
+    return `
+      <div class="note-card ${n.pinned?'pinned':''}" data-nid="${n.id}">
+        <div class="note-card-top">
+          <button class="pin-btn ${n.pinned?'pinned':''}" data-pin="${n.id}"
+            title="${n.pinned?'הסר פין':'הצמד למעלה'}">📌</button>
+          ${!editing?`<button class="note-edit-btn" data-edit="${n.id}">ערוך</button>`:''}
+        </div>
+        ${editing
+          ? `<textarea id="et-${n.id}" rows="3">${esc(n.text)}</textarea>
+             <div class="btn-row">
+               <button class="btn-primary" data-save="${n.id}">שמור</button>
+               <button class="btn-secondary" data-cancel="${n.id}">ביטול</button>
+               <button class="btn-danger" data-del="${n.id}">מחק</button>
+             </div>`
+          : `<p class="note-text">${esc(n.text)}</p>`}
+        <div class="note-meta">
+          <span>נוסף ע״י <span class="author">${esc(n.author)}</span> · ${fmtTime(n.createdAt)}</span>
+          ${n.editedAt?`<span>נערך לאחרונה: ${fmtTime(n.editedAt)}</span>`:''}
+        </div>
+      </div>`;
+  }
+
+  // ── Bind events ────────────────────────────────────────────────────────────
+  function bind() {
+    // Tabs
+    document.querySelectorAll('[data-tab]').forEach(b =>
+      b.addEventListener('click', () => { s.tab=b.dataset.tab; s.addingNote=false; s.editingNoteId=null; render(); }));
+
+    // Visitor dropdowns
+    document.querySelectorAll('.visitor-select').forEach(sel =>
+      sel.addEventListener('change', () => { setVisitor(sel.dataset.date, sel.dataset.slot, +sel.dataset.idx, sel.value); render(); }));
+
+    // Add note
+    document.getElementById('nb')?.addEventListener('click', () => { s.addingNote=true; render(); setTimeout(()=>document.getElementById('nt')?.focus(),0); });
+
+    // Save new note
+    document.getElementById('ns')?.addEventListener('click', () => {
+      const text = document.getElementById('nt')?.value.trim();
+      const author = document.getElementById('na')?.value;
+      if (!text||!author) return;
+      s.notes.push({ id: Date.now().toString(), text, author, createdAt: new Date().toISOString(), pinned: false });
+      saveNotes(); s.addingNote=false; render();
+    });
+
+    // Cancel new note
+    document.getElementById('nc')?.addEventListener('click', () => { s.addingNote=false; render(); });
+
+    // Pin toggle
+    document.querySelectorAll('[data-pin]').forEach(b => b.addEventListener('click', () => {
+      const n = s.notes.find(n=>n.id===b.dataset.pin);
+      if (n) { n.pinned=!n.pinned; saveNotes(); render(); }
+    }));
+
+    // Edit
+    document.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', () => {
+      s.editingNoteId=b.dataset.edit; render(); setTimeout(()=>document.getElementById(`et-${s.editingNoteId}`)?.focus(),0);
+    }));
+
+    // Save edit
+    document.querySelectorAll('[data-save]').forEach(b => b.addEventListener('click', () => {
+      const text = document.getElementById(`et-${b.dataset.save}`)?.value.trim();
+      const n = s.notes.find(n=>n.id===b.dataset.save);
+      if (n&&text) { n.text=text; n.editedAt=new Date().toISOString(); saveNotes(); }
+      s.editingNoteId=null; render();
+    }));
+
+    // Cancel edit
+    document.querySelectorAll('[data-cancel]').forEach(b => b.addEventListener('click', () => { s.editingNoteId=null; render(); }));
+
+    // Delete
+    document.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', () => {
+      s.notes=s.notes.filter(n=>n.id!==b.dataset.del); saveNotes(); s.editingNoteId=null; render();
+    }));
+  }
+
+  // ── Init ───────────────────────────────────────────────────────────────────
+  loadAll();
+  render();
+</script>
+</body>
+</html>

@@ -13,39 +13,11 @@
       min-height: 100vh;
       direction: rtl;
     }
-    header {
-      background: #ffffff;
-      border-bottom: 1px solid #e4e4e7;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-    }
-    .header-inner {
-      max-width: 640px;
-      margin: 0 auto;
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
+    header { background: #ffffff; border-bottom: 1px solid #e4e4e7; position: sticky; top: 0; z-index: 10; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+    .header-inner { max-width: 640px; margin: 0 auto; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
     h1 { font-size: 18px; font-weight: 700; color: #27272a; }
     .tab-group { display: flex; border-radius: 12px; overflow: hidden; border: 1px solid #e4e4e7; }
-    .tab-btn {
-      padding: 8px 14px;
-      border: none;
-      background: transparent;
-      color: #52525b;
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 500;
-      font-family: inherit;
-      transition: background 0.15s, color 0.15s;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
+    .tab-btn { padding: 8px 14px; border: none; background: transparent; color: #52525b; cursor: pointer; font-size: 13px; font-weight: 500; font-family: inherit; transition: background 0.15s, color 0.15s; display: flex; align-items: center; gap: 5px; }
     .tab-btn:hover { background: #f4f4f5; color: #18181b; }
     .tab-btn.active-notes   { background: #f97316; color: white; }
     .tab-btn.active-visits  { background: #059669; color: white; }
@@ -62,38 +34,13 @@
     .day-title { font-weight: 700; font-size: 15px; color: #18181b; }
     .day-card.today .day-title { color: #047857; }
     .today-badge { font-size: 11px; background: #059669; color: white; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
-
-    /* Day note */
-    .day-note-add-btn {
-      margin-right: auto;
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 12px;
-      color: #a1a1aa;
-      font-family: inherit;
-      padding: 2px 6px;
-      border-radius: 6px;
-      transition: background 0.15s, color 0.15s;
-    }
+    .day-note-add-btn { margin-right: auto; background: none; border: none; cursor: pointer; font-size: 12px; color: #a1a1aa; font-family: inherit; padding: 2px 6px; border-radius: 6px; transition: background 0.15s, color 0.15s; }
     .day-note-add-btn:hover { background: #f4f4f5; color: #f97316; }
-    .day-note-display {
-      background: #fefce8;
-      border: 1px solid #fde047;
-      border-radius: 10px;
-      padding: 10px 12px;
-      font-size: 14px;
-      color: #713f12;
-      line-height: 1.5;
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-    }
+    .day-note-display { background: #fefce8; border: 1px solid #fde047; border-radius: 10px; padding: 10px 12px; font-size: 14px; color: #713f12; line-height: 1.5; display: flex; align-items: flex-start; gap: 8px; }
     .day-note-display-text { flex: 1; white-space: pre-wrap; }
     .day-note-edit-btn { background: none; border: none; cursor: pointer; font-size: 11px; color: #a16207; font-family: inherit; flex-shrink: 0; padding: 0; }
     .day-note-edit-btn:hover { color: #92400e; }
     .day-note-form { display: flex; flex-direction: column; gap: 8px; }
-    .day-note-form textarea { font-size: 14px; }
 
     /* Slot card */
     .slot-card { background: #f4f4f5; border: 1px solid #e4e4e7; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
@@ -108,11 +55,34 @@
     .visitor-readonly.filled { background: #d1fae5; border: 1px solid #6ee7b7; color: #047857; }
     .visitor-readonly.empty { color: #71717a; font-style: italic; }
 
-    /* Notes tab */
-    .note-card { background: #ffffff; border: 1px solid #e4e4e7; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    /* Notes tab top buttons */
+    .notes-actions { display: flex; gap: 10px; margin-bottom: 14px; }
+    .notes-actions .add-btn {
+      flex: 1;
+      padding: 11px;
+      border: 2px dashed #d4d4d8;
+      border-radius: 12px;
+      background: transparent;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+      font-family: inherit;
+    }
+    .notes-actions .add-note { color: #71717a; }
+    .notes-actions .add-note:hover { border-color: #f97316; color: #f97316; }
+    .notes-actions .add-task { color: #71717a; }
+    .notes-actions .add-task:hover { border-color: #059669; color: #059669; }
+
+    /* Note card */
+    .note-card { background: #ffffff; border: 1px solid #e4e4e7; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
     .note-card.pinned { background: #fff7ed; border-color: #fdba74; }
     .note-card-top { display: flex; align-items: center; justify-content: space-between; }
-    .pin-btn { font-size: 22px; background: none; border: none; cursor: pointer; line-height: 1; padding: 0; opacity: 0.2; transition: opacity 0.15s, transform 0.15s; }
+    .pin-btn { font-size: 20px; background: none; border: none; cursor: pointer; line-height: 1; padding: 0; opacity: 0.2; transition: opacity 0.15s, transform 0.15s; }
     .pin-btn:hover { opacity: 0.5; }
     .pin-btn.pinned { opacity: 1; transform: scale(1.1); }
     .note-edit-btn { font-size: 12px; background: none; border: none; color: #71717a; cursor: pointer; font-family: inherit; transition: color 0.15s; }
@@ -120,23 +90,55 @@
     .note-text { font-size: 14px; color: #3f3f46; line-height: 1.6; white-space: pre-wrap; }
     .note-meta { border-top: 1px solid #f4f4f5; padding-top: 8px; font-size: 12px; color: #71717a; display: flex; flex-direction: column; gap: 2px; }
     .note-meta .author { color: #3f3f46; font-weight: 500; }
-    .add-note-btn { width: 100%; padding: 12px; border: 2px dashed #d4d4d8; border-radius: 12px; background: transparent; color: #71717a; font-size: 14px; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: border-color 0.15s, color 0.15s; font-family: inherit; margin-bottom: 14px; }
-    .add-note-btn:hover { border-color: #f97316; color: #f97316; }
+
+    /* Task card */
+    .task-card { background: #ffffff; border: 1px solid #e4e4e7; border-radius: 16px; padding: 14px 16px; display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); transition: background 0.15s; }
+    .task-card.completed { background: #f9fafb; }
+    .task-card.pinned { background: #fff7ed; border-color: #fdba74; }
+    .task-check {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      border: 2px solid #d4d4d8;
+      background: transparent;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; color: white;
+      flex-shrink: 0;
+      transition: all 0.15s;
+      margin-top: 1px;
+    }
+    .task-check:hover { border-color: #059669; }
+    .task-check.done { background: #059669; border-color: #059669; }
+    .task-body { flex: 1; min-width: 0; }
+    .task-text { font-size: 14px; color: #3f3f46; line-height: 1.5; }
+    .task-card.completed .task-text { text-decoration: line-through; color: #a1a1aa; }
+    .task-meta { font-size: 12px; color: #a1a1aa; margin-top: 4px; }
+    .task-meta .author { color: #71717a; font-weight: 500; }
+    .task-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .task-del-btn { background: none; border: none; cursor: pointer; color: #d4d4d8; font-size: 20px; line-height: 1; font-family: inherit; padding: 0; transition: color 0.15s; }
+    .task-del-btn:hover { color: #ef4444; }
+
+    /* Forms */
     .note-form { background: #ffffff; border: 1px solid #fdba74; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .task-form { background: #ffffff; border: 1px solid #6ee7b7; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
     textarea { width: 100%; background: #f4f4f5; border: 1px solid #e4e4e7; border-radius: 10px; padding: 10px 12px; font-size: 14px; color: #27272a; font-family: inherit; resize: none; outline: none; direction: rtl; }
     textarea:focus { border-color: #fb923c; }
     textarea::placeholder { color: #a1a1aa; }
+    .task-form textarea:focus { border-color: #34d399; }
     select.author-select { width: 100%; background: #f4f4f5; border: 1px solid #e4e4e7; border-radius: 8px; padding: 8px 12px; font-size: 14px; color: #3f3f46; font-family: inherit; cursor: pointer; outline: none; appearance: none; }
     select.author-select:focus { border-color: #fb923c; }
     .btn-row { display: flex; gap: 8px; }
     .btn-primary { flex: 1; padding: 8px 16px; background: #f97316; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s; font-family: inherit; }
     .btn-primary:hover { background: #fb923c; }
+    .btn-primary.green { background: #059669; }
+    .btn-primary.green:hover { background: #10b981; }
     .btn-secondary { padding: 8px 14px; background: #f4f4f5; color: #52525b; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; transition: background 0.15s; font-family: inherit; }
     .btn-secondary:hover { background: #e4e4e7; }
     .btn-danger { padding: 8px 14px; background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; border-radius: 8px; font-size: 14px; cursor: pointer; transition: background 0.15s; font-family: inherit; }
     .btn-danger:hover { background: #fee2e2; }
     .empty-state { text-align: center; padding: 48px 16px; color: #a1a1aa; }
     .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+    .section-label { font-size: 11px; font-weight: 600; color: #a1a1aa; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; margin-top: 4px; }
   </style>
 </head>
 <body>
@@ -155,10 +157,10 @@
 
   const s = {
     tab: 'visits',
-    schedule: {}, notes: [], dayNotes: {},
+    schedule: {}, notes: [], dayNotes: {}, tasks: [],
     loading: true,
-    addingNote: false, editingNoteId: null,
-    editingDayNote: null,
+    addingNote: false, addingTask: false,
+    editingNoteId: null, editingDayNote: null,
   };
 
   // ── Supabase ───────────────────────────────────────────────────────────────
@@ -173,13 +175,15 @@
   }
 
   async function loadAll() {
-    const [{ data: sched }, { data: notes }, { data: dn }] = await Promise.all([
+    const [{ data: sched }, { data: notes }, { data: dn }, { data: tasks }] = await Promise.all([
       db.from('schedule').select('*'),
       db.from('notes').select('*').order('created_at'),
       db.from('day_notes').select('*'),
+      db.from('tasks').select('*').order('created_at'),
     ]);
     s.schedule = rowsToSchedule(sched || []);
-    s.notes    = notes || [];
+    s.notes    = notes  || [];
+    s.tasks    = tasks  || [];
     s.dayNotes = {};
     for (const r of dn || []) s.dayNotes[r.date_key] = r.note;
   }
@@ -195,69 +199,85 @@
   }
 
   async function saveDayNote(dateKey, text) {
-    const trimmed = text.trim();
-    if (trimmed) {
-      s.dayNotes[dateKey] = trimmed;
-    } else {
-      delete s.dayNotes[dateKey];
-    }
+    const t = text.trim();
+    if (t) { s.dayNotes[dateKey] = t; } else { delete s.dayNotes[dateKey]; }
     s.editingDayNote = null;
     render();
-    if (trimmed) {
-      await db.from('day_notes').upsert({ date_key: dateKey, note: trimmed });
-    } else {
-      await db.from('day_notes').delete().eq('date_key', dateKey);
-    }
+    if (t) { await db.from('day_notes').upsert({ date_key:dateKey, note:t }); }
+    else   { await db.from('day_notes').delete().eq('date_key', dateKey); }
   }
 
   async function addNote(text, author) {
-    const note = { id:Date.now().toString(), text, author, created_at:new Date().toISOString(), pinned:false };
-    s.notes.push(note);
-    s.addingNote = false;
-    render();
-    await db.from('notes').insert(note);
+    const n = { id:Date.now().toString(), text, author, created_at:new Date().toISOString(), pinned:false };
+    s.notes.push(n); s.addingNote=false; render();
+    await db.from('notes').insert(n);
   }
 
   async function togglePin(id) {
     const n = s.notes.find(n=>n.id===id);
     if (!n) return;
-    n.pinned = !n.pinned;
-    render();
+    n.pinned=!n.pinned; render();
     await db.from('notes').update({ pinned:n.pinned }).eq('id', id);
   }
 
   async function saveEdit(id, text) {
     const n = s.notes.find(n=>n.id===id);
     if (!n||!text) return;
-    n.text = text; n.edited_at = new Date().toISOString();
-    s.editingNoteId = null;
-    render();
+    n.text=text; n.edited_at=new Date().toISOString(); s.editingNoteId=null; render();
     await db.from('notes').update({ text, edited_at:n.edited_at }).eq('id', id);
   }
 
   async function deleteNote(id) {
-    s.notes = s.notes.filter(n=>n.id!==id);
-    s.editingNoteId = null;
-    render();
+    s.notes=s.notes.filter(n=>n.id!==id); s.editingNoteId=null; render();
     await db.from('notes').delete().eq('id', id);
+  }
+
+  async function addTask(text, author) {
+    const t = { id:Date.now().toString(), text, author, created_at:new Date().toISOString(), completed:false, pinned:false };
+    s.tasks.push(t); s.addingTask=false; render();
+    await db.from('tasks').insert(t);
+  }
+
+  async function toggleTaskComplete(id) {
+    const t = s.tasks.find(t=>t.id===id);
+    if (!t) return;
+    t.completed=!t.completed; render();
+    await db.from('tasks').update({ completed:t.completed }).eq('id', id);
+  }
+
+  async function toggleTaskPin(id) {
+    const t = s.tasks.find(t=>t.id===id);
+    if (!t) return;
+    t.pinned=!t.pinned; render();
+    await db.from('tasks').update({ pinned:t.pinned }).eq('id', id);
+  }
+
+  async function deleteTask(id) {
+    s.tasks=s.tasks.filter(t=>t.id!==id); render();
+    await db.from('tasks').delete().eq('id', id);
   }
 
   // ── Date helpers ───────────────────────────────────────────────────────────
 
   function toKey(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
   function todayKey() { return toKey(new Date()); }
-  function weekKeys() { return Array.from({length:7},(_,i)=>{ const d=new Date(); d.setDate(d.getDate()+i); return toKey(d); }); }
+  function weekKeys() { return Array.from({length:4},(_,i)=>{ const d=new Date(); d.setDate(d.getDate()+i); return toKey(d); }); }
   function isToday(k) { return k===todayKey(); }
   function isPast(k)  { return k<todayKey(); }
   function fmtDate(k) { const d=new Date(k+'T12:00:00'); return `יום ${HE_DAYS[d.getDay()]}, ${d.getDate()} ב${HE_MONTHS[d.getMonth()]}`; }
   function fmtTime(iso) { const d=new Date(iso); return `${d.getDate()} ב${HE_MONTHS[d.getMonth()]}, ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; }
 
-  // ── Helpers ────────────────────────────────────────────────────────────────
-
   function getDay(k) { return s.schedule[k] || {morning:[],noon:[],evening:[]}; }
   function sortedNotes() {
-    const byDate = (a,b) => a.created_at.localeCompare(b.created_at);
-    return [...s.notes.filter(n=>n.pinned).sort(byDate), ...s.notes.filter(n=>!n.pinned).sort(byDate)];
+    const by = (a,b) => a.created_at.localeCompare(b.created_at);
+    return [...s.notes.filter(n=>n.pinned).sort(by), ...s.notes.filter(n=>!n.pinned).sort(by)];
+  }
+  function sortedTasks() {
+    const by = (a,b) => a.created_at.localeCompare(b.created_at);
+    const pinned    = s.tasks.filter(t=>t.pinned&&!t.completed).sort(by);
+    const active    = s.tasks.filter(t=>!t.pinned&&!t.completed).sort(by);
+    const completed = s.tasks.filter(t=>t.completed).sort(by);
+    return [...pinned, ...active, ...completed];
   }
   function esc(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
@@ -272,7 +292,7 @@
         <div class="header-inner">
           <h1>מבקרים את אמא 🧡</h1>
           <div class="tab-group">
-            <button class="tab-btn ${s.tab==='notes'?'active-notes':''}" data-tab="notes">הערות</button>
+            <button class="tab-btn ${s.tab==='notes'?'active-notes':''}" data-tab="notes">פתקים</button>
             <button class="tab-btn ${s.tab==='visits'?'active-visits':''}" data-tab="visits">ביקורים</button>
             <button class="tab-btn ${s.tab==='archive'?'active-archive':''}" data-tab="archive">
               ארכיון${archiveDates.length?`<span class="archive-badge">${archiveDates.length}</span>`:''}
@@ -284,7 +304,7 @@
         ${s.loading ? '<div class="loading">טוען...</div>' : ''}
         ${!s.loading && s.tab==='visits'  ? htmlVisits() : ''}
         ${!s.loading && s.tab==='archive' ? htmlArchive(archiveDates) : ''}
-        ${!s.loading && s.tab==='notes'   ? htmlNotes() : ''}
+        ${!s.loading && s.tab==='notes'   ? htmlNotesTab() : ''}
       </main>`;
   }
 
@@ -295,31 +315,29 @@
   }
 
   function htmlDay(k, ro) {
-    const day      = getDay(k);
-    const dayNote  = s.dayNotes[k] || '';
-    const editing  = s.editingDayNote === k;
-
+    const day     = getDay(k);
+    const dayNote = s.dayNotes[k] || '';
+    const editing = s.editingDayNote === k;
     const noteSection = editing
       ? `<div class="day-note-form">
            <textarea id="dn-${k}" rows="2" placeholder="הערה ליום זה...">${esc(dayNote)}</textarea>
            <div class="btn-row">
-             <button class="btn-primary btn-sm" data-save-day="${k}">שמור</button>
-             <button class="btn-secondary btn-sm" data-cancel-day="${k}">ביטול</button>
-             ${dayNote ? `<button class="btn-danger btn-sm" data-clear-day="${k}">מחק</button>` : ''}
+             <button class="btn-primary" data-save-day="${k}">שמור</button>
+             <button class="btn-secondary" data-cancel-day="${k}">ביטול</button>
+             ${dayNote?`<button class="btn-danger" data-clear-day="${k}">מחק</button>`:''}
            </div>
          </div>`
       : dayNote
         ? `<div class="day-note-display">
              <span class="day-note-display-text">${esc(dayNote)}</span>
-             ${!ro ? `<button class="day-note-edit-btn" data-edit-day="${k}">ערוך</button>` : ''}
+             ${!ro?`<button class="day-note-edit-btn" data-edit-day="${k}">ערוך</button>`:''}
            </div>`
         : '';
-
     return `<div class="day-card ${isToday(k)?'today':''}">
       <div class="day-card-header">
         <span class="day-title">${fmtDate(k)}</span>
         ${isToday(k)?'<span class="today-badge">היום</span>':''}
-        ${!ro && !editing && !dayNote ? `<button class="day-note-add-btn" data-edit-day="${k}">+ הערה</button>` : ''}
+        ${!ro&&!editing&&!dayNote?`<button class="day-note-add-btn" data-edit-day="${k}">+ הערה</button>`:''}
       </div>
       ${noteSection}
       ${SLOT_KEYS.map(sk=>htmlSlot(k,sk,day[sk]||[],ro)).join('')}
@@ -341,25 +359,69 @@
     </div>`;
   }
 
-  function htmlNotes() {
+  function htmlNotesTab() {
     const notes = sortedNotes();
-    const form = s.addingNote
-      ? `<div class="note-form">
-           <textarea id="nt" rows="3" placeholder="מה חשוב לזכור?"></textarea>
-           <select class="author-select" id="na" dir="rtl">
-             <option value="">— מי מוסיף? —</option>
-             ${PEOPLE.map(p=>`<option>${p}</option>`).join('')}
-           </select>
-           <div class="btn-row">
-             <button class="btn-primary" id="ns">שמור פתק</button>
-             <button class="btn-secondary" id="nc">ביטול</button>
-           </div>
-         </div>`
-      : `<button class="add-note-btn" id="nb"><span style="font-size:18px">+</span> פתק חדש</button>`;
-    const cards = notes.length
-      ? notes.map(n=>htmlNote(n)).join('')
-      : `<div class="empty-state"><div class="icon">📝</div><p>אין פתקים עדיין</p></div>`;
-    return form + cards;
+    const tasks = sortedTasks();
+
+    const addButtons = !s.addingNote && !s.addingTask ? `
+      <div class="notes-actions">
+        <button class="add-btn add-note" id="nb">+ הוסף פתק</button>
+        <button class="add-btn add-task" id="tb">+ הוסף משימה</button>
+      </div>` : '';
+
+    const noteForm = s.addingNote ? `
+      <div class="note-form">
+        <textarea id="nt" rows="3" placeholder="מה חשוב לזכור?"></textarea>
+        <select class="author-select" id="na" dir="rtl">
+          <option value="">— מי מוסיף? —</option>
+          ${PEOPLE.map(p=>`<option>${p}</option>`).join('')}
+        </select>
+        <div class="btn-row">
+          <button class="btn-primary" id="ns">שמור פתק</button>
+          <button class="btn-secondary" id="nc">ביטול</button>
+        </div>
+      </div>` : '';
+
+    const taskForm = s.addingTask ? `
+      <div class="task-form">
+        <textarea id="tt" rows="2" placeholder="מה צריך לעשות?"></textarea>
+        <select class="author-select" id="ta" dir="rtl">
+          <option value="">— מי מוסיף? —</option>
+          ${PEOPLE.map(p=>`<option>${p}</option>`).join('')}
+        </select>
+        <div class="btn-row">
+          <button class="btn-primary green" id="ts">שמור משימה</button>
+          <button class="btn-secondary" id="tc">ביטול</button>
+        </div>
+      </div>` : '';
+
+    const taskCards = tasks.length ? `
+      <div class="section-label">משימות</div>
+      ${tasks.map(t=>htmlTask(t)).join('')}` : '';
+
+    const noteCards = notes.length ? `
+      <div class="section-label" style="margin-top:${tasks.length?'14px':'0'}">פתקים</div>
+      ${notes.map(n=>htmlNote(n)).join('')}` : '';
+
+    const empty = !tasks.length && !notes.length
+      ? `<div class="empty-state"><div class="icon">📝</div><p>אין פתקים או משימות עדיין</p></div>`
+      : '';
+
+    return addButtons + noteForm + taskForm + taskCards + noteCards + empty;
+  }
+
+  function htmlTask(t) {
+    return `<div class="task-card ${t.completed?'completed':''} ${t.pinned?'pinned':''}">
+      <button class="task-check ${t.completed?'done':''}" data-check="${t.id}">${t.completed?'✓':''}</button>
+      <div class="task-body">
+        <p class="task-text">${esc(t.text)}</p>
+        <div class="task-meta">נוסף ע״י <span class="author">${esc(t.author)}</span> · ${fmtTime(t.created_at)}</div>
+      </div>
+      <div class="task-actions">
+        <button class="pin-btn ${t.pinned?'pinned':''}" data-pin-task="${t.id}">📌</button>
+        <button class="task-del-btn" data-del-task="${t.id}">×</button>
+      </div>
+    </div>`;
   }
 
   function htmlNote(n) {
@@ -388,31 +450,32 @@
 
   function bind() {
     document.querySelectorAll('[data-tab]').forEach(b =>
-      b.addEventListener('click', () => { s.tab=b.dataset.tab; s.addingNote=false; s.editingNoteId=null; s.editingDayNote=null; render(); }));
+      b.addEventListener('click', () => { s.tab=b.dataset.tab; s.addingNote=false; s.addingTask=false; s.editingNoteId=null; s.editingDayNote=null; render(); }));
 
     document.querySelectorAll('.visitor-select').forEach(sel =>
       sel.addEventListener('change', () => setVisitor(sel.dataset.date, sel.dataset.slot, +sel.dataset.idx, sel.value)));
 
     document.querySelectorAll('[data-edit-day]').forEach(b => b.addEventListener('click', () => {
-      s.editingDayNote = b.dataset.editDay; render();
-      setTimeout(() => document.getElementById(`dn-${s.editingDayNote}`)?.focus(), 0);
+      s.editingDayNote=b.dataset.editDay; render(); setTimeout(()=>document.getElementById(`dn-${s.editingDayNote}`)?.focus(),0);
     }));
-
-    document.querySelectorAll('[data-save-day]').forEach(b => b.addEventListener('click', () => {
-      const text = document.getElementById(`dn-${b.dataset.saveDay}`)?.value || '';
-      saveDayNote(b.dataset.saveDay, text);
-    }));
-
+    document.querySelectorAll('[data-save-day]').forEach(b => b.addEventListener('click', () =>
+      saveDayNote(b.dataset.saveDay, document.getElementById(`dn-${b.dataset.saveDay}`)?.value||'')));
     document.querySelectorAll('[data-cancel-day]').forEach(b => b.addEventListener('click', () => { s.editingDayNote=null; render(); }));
-    document.querySelectorAll('[data-clear-day]').forEach(b => b.addEventListener('click', () => saveDayNote(b.dataset.clearDay, '')));
+    document.querySelectorAll('[data-clear-day]').forEach(b => b.addEventListener('click', () => saveDayNote(b.dataset.clearDay,'')));
 
     document.getElementById('nb')?.addEventListener('click', () => { s.addingNote=true; render(); setTimeout(()=>document.getElementById('nt')?.focus(),0); });
     document.getElementById('ns')?.addEventListener('click', () => {
-      const text=document.getElementById('nt')?.value.trim();
-      const author=document.getElementById('na')?.value;
-      if (text&&author) addNote(text, author);
+      const text=document.getElementById('nt')?.value.trim(), author=document.getElementById('na')?.value;
+      if (text&&author) addNote(text,author);
     });
     document.getElementById('nc')?.addEventListener('click', () => { s.addingNote=false; render(); });
+
+    document.getElementById('tb')?.addEventListener('click', () => { s.addingTask=true; render(); setTimeout(()=>document.getElementById('tt')?.focus(),0); });
+    document.getElementById('ts')?.addEventListener('click', () => {
+      const text=document.getElementById('tt')?.value.trim(), author=document.getElementById('ta')?.value;
+      if (text&&author) addTask(text,author);
+    });
+    document.getElementById('tc')?.addEventListener('click', () => { s.addingTask=false; render(); });
 
     document.querySelectorAll('[data-pin]').forEach(b => b.addEventListener('click', () => togglePin(b.dataset.pin)));
     document.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', () => {
@@ -420,10 +483,14 @@
     }));
     document.querySelectorAll('[data-save]').forEach(b => b.addEventListener('click', () => {
       const text=document.getElementById(`et-${b.dataset.save}`)?.value.trim();
-      if (text) saveEdit(b.dataset.save, text);
+      if (text) saveEdit(b.dataset.save,text);
     }));
     document.querySelectorAll('[data-cancel]').forEach(b => b.addEventListener('click', () => { s.editingNoteId=null; render(); }));
     document.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', () => deleteNote(b.dataset.del)));
+
+    document.querySelectorAll('[data-check]').forEach(b => b.addEventListener('click', () => toggleTaskComplete(b.dataset.check)));
+    document.querySelectorAll('[data-pin-task]').forEach(b => b.addEventListener('click', () => toggleTaskPin(b.dataset.pinTask)));
+    document.querySelectorAll('[data-del-task]').forEach(b => b.addEventListener('click', () => deleteTask(b.dataset.delTask)));
   }
 
   // ── Init ───────────────────────────────────────────────────────────────────
@@ -431,7 +498,7 @@
   async function init() {
     render();
     await loadAll();
-    s.loading = false;
+    s.loading=false;
     render();
     setInterval(async () => { await loadAll(); render(); }, 15000);
   }

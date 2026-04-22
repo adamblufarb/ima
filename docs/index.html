@@ -30,6 +30,8 @@
     .tab-btn.active-archive { background: #71717a; color: white; }
     .archive-badge { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: rgba(255,255,255,0.25); border-radius: 50%; font-size: 11px; }
     .tab-btn:not([class*="active"]) .archive-badge { background: #e4e4e7; color: #52525b; }
+    .notif-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #f97316; margin-inline-start: 5px; vertical-align: middle; margin-bottom: 1px; }
+    .tab-btn.active-notes .notif-dot { background: white; }
     main { max-width: 640px; margin: 0 auto; padding: 20px 16px; }
     .loading { text-align: center; padding: 60px 16px; color: #71717a; font-size: 15px; }
 
@@ -326,12 +328,13 @@
 
   function htmlApp() {
     const archiveDates = Object.keys(s.schedule).filter(isPast).sort((a,b)=>b.localeCompare(a));
+    const hasPending = s.tasks.some(t => !t.completed);
     return `
       <header>
         <div class="header-inner">
           <h1>מבקרים את אמא 🧡</h1>
           <div class="tab-group">
-            <button class="tab-btn ${s.tab==='notes'?'active-notes':''}" data-tab="notes">פתקים</button>
+            <button class="tab-btn ${s.tab==='notes'?'active-notes':''}" data-tab="notes">פתקים${hasPending?'<span class="notif-dot"></span>':''}</button>
             <button class="tab-btn ${s.tab==='visits'?'active-visits':''}" data-tab="visits">ביקורים</button>
             <button class="tab-btn ${s.tab==='archive'?'active-archive':''}" data-tab="archive">
               ארכיון${archiveDates.length?`<span class="archive-badge">${archiveDates.length}</span>`:''}

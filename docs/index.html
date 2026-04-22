@@ -197,6 +197,8 @@
     for (const r of dn || []) s.dayNotes[r.date_key] = r.note;
   }
 
+  let pendingWrites = 0;
+
   async function setVisitor(dateKey, slotKey, idx, name) {
     const day  = getDay(dateKey);
     const slot = [day[slotKey]?.[0]||'', day[slotKey]?.[1]||'', day[slotKey]?.[2]||''];
@@ -206,7 +208,9 @@
     }
     s.schedule = { ...s.schedule, [dateKey]: { ...day, [slotKey]: slot } };
     render();
+    pendingWrites++;
     await db.from('schedule').upsert({ date_key:dateKey, slot_key:slotKey, visitor_0:slot[0], visitor_1:slot[1], visitor_2:slot[2] });
+    pendingWrites--;
   }
 
   async function saveDayNote(dateKey, text) {
@@ -558,6 +562,7 @@
     s.loading=false;
     render();
     setInterval(async () => {
+      if (pendingWrites > 0) return;
       const editing = s.addingNote || s.addingTask || s.editingNoteId || s.editingDayNote || s.editingTaskId;
       await loadAll();
       if (!editing) render();

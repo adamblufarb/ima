@@ -31,17 +31,12 @@
       gap: 12px;
     }
     h1 { font-size: 18px; font-weight: 700; color: #27272a; }
-    .tab-group {
-      display: flex;
-      border-radius: 12px;
-      overflow: hidden;
-      border: 1px solid #e4e4e7;
-    }
+    .tab-group { display: flex; border-radius: 12px; overflow: hidden; border: 1px solid #e4e4e7; }
     .tab-btn {
       padding: 8px 14px;
       border: none;
       background: transparent;
-      color: #71717a;
+      color: #52525b;
       cursor: pointer;
       font-size: 13px;
       font-weight: 500;
@@ -51,153 +46,87 @@
       align-items: center;
       gap: 5px;
     }
-    .tab-btn:hover { background: #f4f4f5; color: #27272a; }
+    .tab-btn:hover { background: #f4f4f5; color: #18181b; }
     .tab-btn.active-notes   { background: #f97316; color: white; }
     .tab-btn.active-visits  { background: #059669; color: white; }
     .tab-btn.active-archive { background: #71717a; color: white; }
-    .archive-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 18px; height: 18px;
-      background: rgba(255,255,255,0.25);
-      border-radius: 50%;
-      font-size: 11px;
-    }
+    .archive-badge { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: rgba(255,255,255,0.25); border-radius: 50%; font-size: 11px; }
     .tab-btn:not([class*="active"]) .archive-badge { background: #e4e4e7; color: #52525b; }
     main { max-width: 640px; margin: 0 auto; padding: 20px 16px; }
+    .loading { text-align: center; padding: 60px 16px; color: #71717a; font-size: 15px; }
 
-    .loading { text-align: center; padding: 60px 16px; color: #a1a1aa; font-size: 15px; }
-
-    .day-card {
-      background: #ffffff;
-      border: 1px solid #e4e4e7;
-      border-radius: 16px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 14px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-    }
+    /* Day card */
+    .day-card { background: #ffffff; border: 1px solid #e4e4e7; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
     .day-card.today { background: #ecfdf5; border-color: #6ee7b7; }
     .day-card-header { display: flex; align-items: center; gap: 8px; }
-    .day-title { font-weight: 700; font-size: 15px; color: #3f3f46; }
+    .day-title { font-weight: 700; font-size: 15px; color: #18181b; }
     .day-card.today .day-title { color: #047857; }
     .today-badge { font-size: 11px; background: #059669; color: white; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
 
-    .slot-card {
-      background: #f4f4f5;
-      border: 1px solid #e4e4e7;
-      border-radius: 12px;
-      padding: 12px;
+    /* Day note */
+    .day-note-add-btn {
+      margin-right: auto;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 12px;
+      color: #a1a1aa;
+      font-family: inherit;
+      padding: 2px 6px;
+      border-radius: 6px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .day-note-add-btn:hover { background: #f4f4f5; color: #f97316; }
+    .day-note-display {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 14px;
+      color: #713f12;
+      line-height: 1.5;
       display: flex;
-      flex-direction: column;
+      align-items: flex-start;
       gap: 8px;
     }
+    .day-note-display-text { flex: 1; white-space: pre-wrap; }
+    .day-note-edit-btn { background: none; border: none; cursor: pointer; font-size: 11px; color: #a16207; font-family: inherit; flex-shrink: 0; padding: 0; }
+    .day-note-edit-btn:hover { color: #92400e; }
+    .day-note-form { display: flex; flex-direction: column; gap: 8px; }
+    .day-note-form textarea { font-size: 14px; }
+
+    /* Slot card */
+    .slot-card { background: #f4f4f5; border: 1px solid #e4e4e7; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
     .slot-header { display: flex; align-items: center; justify-content: space-between; }
-    .slot-label { font-weight: 600; font-size: 14px; color: #3f3f46; }
-    .slot-time { font-size: 12px; color: #a1a1aa; font-family: monospace; }
+    .slot-label { font-weight: 600; font-size: 14px; color: #18181b; }
+    .slot-time { font-size: 12px; color: #71717a; font-family: monospace; }
     .visitor-row { display: flex; align-items: center; gap: 8px; }
-    .visitor-label { font-size: 12px; color: #a1a1aa; width: 54px; flex-shrink: 0; }
-    .visitor-select {
-      flex: 1;
-      background: #ffffff;
-      border: 1px solid #e4e4e7;
-      border-radius: 8px;
-      padding: 6px 10px;
-      font-size: 14px;
-      color: #3f3f46;
-      font-family: inherit;
-      cursor: pointer;
-      outline: none;
-      appearance: none;
-    }
+    .visitor-label { font-size: 12px; color: #52525b; width: 54px; flex-shrink: 0; font-weight: 500; }
+    .visitor-select { flex: 1; background: #ffffff; border: 1px solid #e4e4e7; border-radius: 8px; padding: 6px 10px; font-size: 14px; color: #18181b; font-family: inherit; cursor: pointer; outline: none; appearance: none; }
     .visitor-select:focus { border-color: #34d399; }
     .visitor-readonly { flex: 1; font-size: 14px; padding: 6px 10px; border-radius: 8px; }
     .visitor-readonly.filled { background: #d1fae5; border: 1px solid #6ee7b7; color: #047857; }
-    .visitor-readonly.empty { color: #a1a1aa; font-style: italic; }
+    .visitor-readonly.empty { color: #71717a; font-style: italic; }
 
-    .note-card {
-      background: #ffffff;
-      border: 1px solid #e4e4e7;
-      border-radius: 16px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 14px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-    }
+    /* Notes tab */
+    .note-card { background: #ffffff; border: 1px solid #e4e4e7; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
     .note-card.pinned { background: #fff7ed; border-color: #fdba74; }
     .note-card-top { display: flex; align-items: center; justify-content: space-between; }
     .pin-btn { font-size: 22px; background: none; border: none; cursor: pointer; line-height: 1; padding: 0; opacity: 0.2; transition: opacity 0.15s, transform 0.15s; }
     .pin-btn:hover { opacity: 0.5; }
     .pin-btn.pinned { opacity: 1; transform: scale(1.1); }
-    .note-edit-btn { font-size: 12px; background: none; border: none; color: #a1a1aa; cursor: pointer; font-family: inherit; transition: color 0.15s; }
+    .note-edit-btn { font-size: 12px; background: none; border: none; color: #71717a; cursor: pointer; font-family: inherit; transition: color 0.15s; }
     .note-edit-btn:hover { color: #f97316; }
     .note-text { font-size: 14px; color: #3f3f46; line-height: 1.6; white-space: pre-wrap; }
-    .note-meta { border-top: 1px solid #f4f4f5; padding-top: 8px; font-size: 12px; color: #a1a1aa; display: flex; flex-direction: column; gap: 2px; }
-    .note-meta .author { color: #52525b; font-weight: 500; }
-
-    .add-note-btn {
-      width: 100%;
-      padding: 12px;
-      border: 2px dashed #d4d4d8;
-      border-radius: 12px;
-      background: transparent;
-      color: #a1a1aa;
-      font-size: 14px;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      cursor: pointer;
-      transition: border-color 0.15s, color 0.15s;
-      font-family: inherit;
-      margin-bottom: 14px;
-    }
+    .note-meta { border-top: 1px solid #f4f4f5; padding-top: 8px; font-size: 12px; color: #71717a; display: flex; flex-direction: column; gap: 2px; }
+    .note-meta .author { color: #3f3f46; font-weight: 500; }
+    .add-note-btn { width: 100%; padding: 12px; border: 2px dashed #d4d4d8; border-radius: 12px; background: transparent; color: #71717a; font-size: 14px; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: border-color 0.15s, color 0.15s; font-family: inherit; margin-bottom: 14px; }
     .add-note-btn:hover { border-color: #f97316; color: #f97316; }
-    .note-form {
-      background: #ffffff;
-      border: 1px solid #fdba74;
-      border-radius: 16px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 14px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-    }
-    textarea {
-      width: 100%;
-      background: #f4f4f5;
-      border: 1px solid #e4e4e7;
-      border-radius: 10px;
-      padding: 10px 12px;
-      font-size: 14px;
-      color: #27272a;
-      font-family: inherit;
-      resize: none;
-      outline: none;
-      direction: rtl;
-    }
+    .note-form { background: #ffffff; border: 1px solid #fdba74; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    textarea { width: 100%; background: #f4f4f5; border: 1px solid #e4e4e7; border-radius: 10px; padding: 10px 12px; font-size: 14px; color: #27272a; font-family: inherit; resize: none; outline: none; direction: rtl; }
     textarea:focus { border-color: #fb923c; }
     textarea::placeholder { color: #a1a1aa; }
-    select.author-select {
-      width: 100%;
-      background: #f4f4f5;
-      border: 1px solid #e4e4e7;
-      border-radius: 8px;
-      padding: 8px 12px;
-      font-size: 14px;
-      color: #3f3f46;
-      font-family: inherit;
-      cursor: pointer;
-      outline: none;
-      appearance: none;
-    }
+    select.author-select { width: 100%; background: #f4f4f5; border: 1px solid #e4e4e7; border-radius: 8px; padding: 8px 12px; font-size: 14px; color: #3f3f46; font-family: inherit; cursor: pointer; outline: none; appearance: none; }
     select.author-select:focus { border-color: #fb923c; }
     .btn-row { display: flex; gap: 8px; }
     .btn-primary { flex: 1; padding: 8px 16px; background: #f97316; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s; font-family: inherit; }
@@ -224,7 +153,13 @@
   const HE_DAYS   = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
   const HE_MONTHS = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
 
-  const s = { tab:'visits', schedule:{}, notes:[], loading:true, addingNote:false, editingNoteId:null };
+  const s = {
+    tab: 'visits',
+    schedule: {}, notes: [], dayNotes: {},
+    loading: true,
+    addingNote: false, editingNoteId: null,
+    editingDayNote: null,
+  };
 
   // ── Supabase ───────────────────────────────────────────────────────────────
 
@@ -238,12 +173,15 @@
   }
 
   async function loadAll() {
-    const [{ data: sched }, { data: notes }] = await Promise.all([
+    const [{ data: sched }, { data: notes }, { data: dn }] = await Promise.all([
       db.from('schedule').select('*'),
       db.from('notes').select('*').order('created_at'),
+      db.from('day_notes').select('*'),
     ]);
     s.schedule = rowsToSchedule(sched || []);
     s.notes    = notes || [];
+    s.dayNotes = {};
+    for (const r of dn || []) s.dayNotes[r.date_key] = r.note;
   }
 
   async function setVisitor(dateKey, slotKey, idx, name) {
@@ -254,6 +192,22 @@
     s.schedule = { ...s.schedule, [dateKey]: { ...day, [slotKey]: slot } };
     render();
     await db.from('schedule').upsert({ date_key:dateKey, slot_key:slotKey, visitor_0:slot[0], visitor_1:slot[1] });
+  }
+
+  async function saveDayNote(dateKey, text) {
+    const trimmed = text.trim();
+    if (trimmed) {
+      s.dayNotes[dateKey] = trimmed;
+    } else {
+      delete s.dayNotes[dateKey];
+    }
+    s.editingDayNote = null;
+    render();
+    if (trimmed) {
+      await db.from('day_notes').upsert({ date_key: dateKey, note: trimmed });
+    } else {
+      await db.from('day_notes').delete().eq('date_key', dateKey);
+    }
   }
 
   async function addNote(text, author) {
@@ -298,25 +252,18 @@
   function fmtDate(k) { const d=new Date(k+'T12:00:00'); return `יום ${HE_DAYS[d.getDay()]}, ${d.getDate()} ב${HE_MONTHS[d.getMonth()]}`; }
   function fmtTime(iso) { const d=new Date(iso); return `${d.getDate()} ב${HE_MONTHS[d.getMonth()]}, ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; }
 
-  // ── Schedule helpers ───────────────────────────────────────────────────────
+  // ── Helpers ────────────────────────────────────────────────────────────────
 
   function getDay(k) { return s.schedule[k] || {morning:[],noon:[],evening:[]}; }
-
-  // ── Notes helpers ──────────────────────────────────────────────────────────
-
   function sortedNotes() {
     const byDate = (a,b) => a.created_at.localeCompare(b.created_at);
     return [...s.notes.filter(n=>n.pinned).sort(byDate), ...s.notes.filter(n=>!n.pinned).sort(byDate)];
   }
+  function esc(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
   // ── Render ─────────────────────────────────────────────────────────────────
 
-  function esc(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
-  function render() {
-    document.getElementById('app').innerHTML = htmlApp();
-    bind();
-  }
+  function render() { document.getElementById('app').innerHTML = htmlApp(); bind(); }
 
   function htmlApp() {
     const archiveDates = Object.keys(s.schedule).filter(isPast).sort((a,b)=>b.localeCompare(a));
@@ -346,16 +293,39 @@
     if (!dates.length) return `<div class="empty-state"><div class="icon">📁</div><p>אין ביקורים בארכיון עדיין</p></div>`;
     return dates.map(k=>htmlDay(k,true)).join('');
   }
+
   function htmlDay(k, ro) {
-    const day = getDay(k);
+    const day      = getDay(k);
+    const dayNote  = s.dayNotes[k] || '';
+    const editing  = s.editingDayNote === k;
+
+    const noteSection = editing
+      ? `<div class="day-note-form">
+           <textarea id="dn-${k}" rows="2" placeholder="הערה ליום זה...">${esc(dayNote)}</textarea>
+           <div class="btn-row">
+             <button class="btn-primary btn-sm" data-save-day="${k}">שמור</button>
+             <button class="btn-secondary btn-sm" data-cancel-day="${k}">ביטול</button>
+             ${dayNote ? `<button class="btn-danger btn-sm" data-clear-day="${k}">מחק</button>` : ''}
+           </div>
+         </div>`
+      : dayNote
+        ? `<div class="day-note-display">
+             <span class="day-note-display-text">${esc(dayNote)}</span>
+             ${!ro ? `<button class="day-note-edit-btn" data-edit-day="${k}">ערוך</button>` : ''}
+           </div>`
+        : '';
+
     return `<div class="day-card ${isToday(k)?'today':''}">
       <div class="day-card-header">
         <span class="day-title">${fmtDate(k)}</span>
         ${isToday(k)?'<span class="today-badge">היום</span>':''}
+        ${!ro && !editing && !dayNote ? `<button class="day-note-add-btn" data-edit-day="${k}">+ הערה</button>` : ''}
       </div>
+      ${noteSection}
       ${SLOT_KEYS.map(sk=>htmlSlot(k,sk,day[sk]||[],ro)).join('')}
     </div>`;
   }
+
   function htmlSlot(dateKey, slotKey, visitors, ro) {
     const {label,time} = SLOTS[slotKey];
     const v0=visitors[0]||'', v1=visitors[1]||'';
@@ -370,6 +340,7 @@
       <div class="visitor-row"><span class="visitor-label">מבקר 2</span>${dd(1,v1,v0)}</div>
     </div>`;
   }
+
   function htmlNotes() {
     const notes = sortedNotes();
     const form = s.addingNote
@@ -390,11 +361,12 @@
       : `<div class="empty-state"><div class="icon">📝</div><p>אין פתקים עדיין</p></div>`;
     return form + cards;
   }
+
   function htmlNote(n) {
     const editing = s.editingNoteId===n.id;
     return `<div class="note-card ${n.pinned?'pinned':''}">
       <div class="note-card-top">
-        <button class="pin-btn ${n.pinned?'pinned':''}" data-pin="${n.id}" title="${n.pinned?'הסר פין':'הצמד למעלה'}">📌</button>
+        <button class="pin-btn ${n.pinned?'pinned':''}" data-pin="${n.id}">📌</button>
         ${!editing?`<button class="note-edit-btn" data-edit="${n.id}">ערוך</button>`:''}
       </div>
       ${editing
@@ -412,38 +384,45 @@
     </div>`;
   }
 
-  // ── Bind events ────────────────────────────────────────────────────────────
+  // ── Bind ───────────────────────────────────────────────────────────────────
 
   function bind() {
     document.querySelectorAll('[data-tab]').forEach(b =>
-      b.addEventListener('click', () => { s.tab=b.dataset.tab; s.addingNote=false; s.editingNoteId=null; render(); }));
+      b.addEventListener('click', () => { s.tab=b.dataset.tab; s.addingNote=false; s.editingNoteId=null; s.editingDayNote=null; render(); }));
 
     document.querySelectorAll('.visitor-select').forEach(sel =>
       sel.addEventListener('change', () => setVisitor(sel.dataset.date, sel.dataset.slot, +sel.dataset.idx, sel.value)));
 
-    document.getElementById('nb')?.addEventListener('click', () => { s.addingNote=true; render(); setTimeout(()=>document.getElementById('nt')?.focus(),0); });
+    document.querySelectorAll('[data-edit-day]').forEach(b => b.addEventListener('click', () => {
+      s.editingDayNote = b.dataset.editDay; render();
+      setTimeout(() => document.getElementById(`dn-${s.editingDayNote}`)?.focus(), 0);
+    }));
 
+    document.querySelectorAll('[data-save-day]').forEach(b => b.addEventListener('click', () => {
+      const text = document.getElementById(`dn-${b.dataset.saveDay}`)?.value || '';
+      saveDayNote(b.dataset.saveDay, text);
+    }));
+
+    document.querySelectorAll('[data-cancel-day]').forEach(b => b.addEventListener('click', () => { s.editingDayNote=null; render(); }));
+    document.querySelectorAll('[data-clear-day]').forEach(b => b.addEventListener('click', () => saveDayNote(b.dataset.clearDay, '')));
+
+    document.getElementById('nb')?.addEventListener('click', () => { s.addingNote=true; render(); setTimeout(()=>document.getElementById('nt')?.focus(),0); });
     document.getElementById('ns')?.addEventListener('click', () => {
       const text=document.getElementById('nt')?.value.trim();
       const author=document.getElementById('na')?.value;
       if (text&&author) addNote(text, author);
     });
-
     document.getElementById('nc')?.addEventListener('click', () => { s.addingNote=false; render(); });
 
     document.querySelectorAll('[data-pin]').forEach(b => b.addEventListener('click', () => togglePin(b.dataset.pin)));
-
     document.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', () => {
       s.editingNoteId=b.dataset.edit; render(); setTimeout(()=>document.getElementById(`et-${s.editingNoteId}`)?.focus(),0);
     }));
-
     document.querySelectorAll('[data-save]').forEach(b => b.addEventListener('click', () => {
       const text=document.getElementById(`et-${b.dataset.save}`)?.value.trim();
       if (text) saveEdit(b.dataset.save, text);
     }));
-
     document.querySelectorAll('[data-cancel]').forEach(b => b.addEventListener('click', () => { s.editingNoteId=null; render(); }));
-
     document.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', () => deleteNote(b.dataset.del)));
   }
 
@@ -454,7 +433,6 @@
     await loadAll();
     s.loading = false;
     render();
-    // Sync with others every 15 seconds
     setInterval(async () => { await loadAll(); render(); }, 15000);
   }
 

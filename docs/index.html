@@ -171,7 +171,7 @@
     const out = {};
     for (const r of rows) {
       if (!out[r.date_key]) out[r.date_key] = { morning:[], noon:[], evening:[] };
-      out[r.date_key][r.slot_key] = [r.visitor_0||'', r.visitor_1||''];
+      out[r.date_key][r.slot_key] = [r.visitor_0||'', r.visitor_1||'', r.visitor_2||''];
     }
     return out;
   }
@@ -192,12 +192,14 @@
 
   async function setVisitor(dateKey, slotKey, idx, name) {
     const day  = getDay(dateKey);
-    const slot = [day[slotKey]?.[0]||'', day[slotKey]?.[1]||''];
+    const slot = [day[slotKey]?.[0]||'', day[slotKey]?.[1]||'', day[slotKey]?.[2]||''];
     slot[idx]  = name;
-    if (slot[0] && slot[0] === slot[1]) slot[1-idx] = '';
+    for (let i = 0; i < 3; i++) {
+      if (i !== idx && slot[i] && slot[i] === name) slot[i] = '';
+    }
     s.schedule = { ...s.schedule, [dateKey]: { ...day, [slotKey]: slot } };
     render();
-    await db.from('schedule').upsert({ date_key:dateKey, slot_key:slotKey, visitor_0:slot[0], visitor_1:slot[1] });
+    await db.from('schedule').upsert({ date_key:dateKey, slot_key:slotKey, visitor_0:slot[0], visitor_1:slot[1], visitor_2:slot[2] });
   }
 
   async function saveDayNote(dateKey, text) {
@@ -348,16 +350,17 @@
 
   function htmlSlot(dateKey, slotKey, visitors, ro) {
     const {label,time} = SLOTS[slotKey];
-    const v0=visitors[0]||'', v1=visitors[1]||'';
-    const dd = (idx,val,excl) => {
+    const v0=visitors[0]||'', v1=visitors[1]||'', v2=visitors[2]||'';
+    const dd = (idx, val, ex1, ex2) => {
       if (ro) return `<span class="visitor-readonly ${val?'filled':'empty'}">${val||'—'}</span>`;
-      const opts = PEOPLE.filter(p=>p!==excl).map(p=>`<option value="${p}"${p===val?' selected':''}>${p}</option>`).join('');
+      const opts = PEOPLE.filter(p=>p!==ex1&&p!==ex2).map(p=>`<option value="${p}"${p===val?' selected':''}>${p}</option>`).join('');
       return `<select class="visitor-select" data-date="${dateKey}" data-slot="${slotKey}" data-idx="${idx}"><option value="">—</option>${opts}</select>`;
     };
     return `<div class="slot-card">
       <div class="slot-header"><span class="slot-label">${label}</span><span class="slot-time">${time}</span></div>
-      <div class="visitor-row"><span class="visitor-label">מבקר 1</span>${dd(0,v0,v1)}</div>
-      <div class="visitor-row"><span class="visitor-label">מבקר 2</span>${dd(1,v1,v0)}</div>
+      <div class="visitor-row"><span class="visitor-label">מבקר 1</span>${dd(0,v0,v1,v2)}</div>
+      <div class="visitor-row"><span class="visitor-label">מבקר 2</span>${dd(1,v1,v0,v2)}</div>
+      <div class="visitor-row"><span class="visitor-label" style="color:#a1a1aa;font-weight:400">גם יכול</span>${dd(2,v2,v0,v1)}</div>
     </div>`;
   }
 

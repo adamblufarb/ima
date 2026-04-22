@@ -100,7 +100,6 @@
     /* Task card */
     .task-card { background: #ffffff; border: 1px solid #e4e4e7; border-radius: 16px; padding: 14px 16px; display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); transition: background 0.15s; }
     .task-card.completed { background: #f9fafb; }
-    .task-card.pinned { background: #fff7ed; border-color: #fdba74; }
     .task-check {
       width: 24px; height: 24px;
       border-radius: 50%;
@@ -120,9 +119,6 @@
     .task-card.completed .task-text { text-decoration: line-through; color: #a1a1aa; }
     .task-meta { font-size: 12px; color: #a1a1aa; margin-top: 4px; }
     .task-meta .author { color: #71717a; font-weight: 500; }
-    .task-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-    .task-del-btn { background: none; border: none; cursor: pointer; color: #d4d4d8; font-size: 20px; line-height: 1; font-family: inherit; padding: 0; transition: color 0.15s; }
-    .task-del-btn:hover { color: #ef4444; }
 
     /* Forms */
     .note-form { background: #ffffff; border: 1px solid #fdba74; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
@@ -166,7 +162,7 @@
     schedule: {}, notes: [], dayNotes: {}, tasks: [],
     loading: true,
     addingNote: false, addingTask: false,
-    editingNoteId: null, editingDayNote: null,
+    editingNoteId: null, editingDayNote: null, editingTaskId: null,
   };
 
   // ── Supabase ───────────────────────────────────────────────────────────────
@@ -251,11 +247,11 @@
     await db.from('tasks').update({ completed:t.completed }).eq('id', id);
   }
 
-  async function toggleTaskPin(id) {
+  async function saveTaskEdit(id, text) {
     const t = s.tasks.find(t=>t.id===id);
-    if (!t) return;
-    t.pinned=!t.pinned; render();
-    await db.from('tasks').update({ pinned:t.pinned }).eq('id', id);
+    if (!t||!text) return;
+    t.text=text; s.editingTaskId=null; render();
+    await db.from('tasks').update({ text }).eq('id', id);
   }
 
   async function deleteTask(id) {
@@ -280,10 +276,10 @@
   }
   function sortedTasks() {
     const by = (a,b) => a.created_at.localeCompare(b.created_at);
-    const pinned    = s.tasks.filter(t=>t.pinned&&!t.completed).sort(by);
-    const active    = s.tasks.filter(t=>!t.pinned&&!t.completed).sort(by);
-    const completed = s.tasks.filter(t=>t.completed).sort(by);
-    return [...pinned, ...active, ...completed];
+    return [
+      ...s.tasks.filter(t=>!t.completed).sort(by),
+      ...s.tasks.filter(t=>t.completed).sort(by),
+    ];
   }
   function esc(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
@@ -417,16 +413,21 @@
   }
 
   function htmlTask(t) {
-    return `<div class="task-card ${t.completed?'completed':''} ${t.pinned?'pinned':''}">
+    const editing = s.editingTaskId === t.id;
+    return `<div class="task-card ${t.completed?'completed':''}">
       <button class="task-check ${t.completed?'done':''}" data-check="${t.id}">${t.completed?'✓':''}</button>
       <div class="task-body">
-        <p class="task-text">${esc(t.text)}</p>
+        ${editing
+          ? `<textarea id="et-task-${t.id}" rows="2">${esc(t.text)}</textarea>
+             <div class="btn-row" style="margin-top:8px">
+               <button class="btn-primary green" data-save-task="${t.id}">שמור</button>
+               <button class="btn-secondary" data-cancel-task="${t.id}">ביטול</button>
+               <button class="btn-danger" data-del-task="${t.id}">מחק</button>
+             </div>`
+          : `<p class="task-text">${esc(t.text)}</p>`}
         <div class="task-meta">נוסף ע״י <span class="author">${esc(t.author)}</span> · ${fmtTime(t.created_at)}</div>
       </div>
-      <div class="task-actions">
-        <button class="pin-btn ${t.pinned?'pinned':''}" data-pin-task="${t.id}">📌</button>
-        <button class="task-del-btn" data-del-task="${t.id}">×</button>
-      </div>
+      ${!editing ? `<button class="note-edit-btn" data-edit-task="${t.id}">ערוך</button>` : ''}
     </div>`;
   }
 
@@ -495,7 +496,14 @@
     document.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', () => deleteNote(b.dataset.del)));
 
     document.querySelectorAll('[data-check]').forEach(b => b.addEventListener('click', () => toggleTaskComplete(b.dataset.check)));
-    document.querySelectorAll('[data-pin-task]').forEach(b => b.addEventListener('click', () => toggleTaskPin(b.dataset.pinTask)));
+    document.querySelectorAll('[data-edit-task]').forEach(b => b.addEventListener('click', () => {
+      s.editingTaskId=b.dataset.editTask; render(); setTimeout(()=>document.getElementById(`et-task-${s.editingTaskId}`)?.focus(),0);
+    }));
+    document.querySelectorAll('[data-save-task]').forEach(b => b.addEventListener('click', () => {
+      const text=document.getElementById(`et-task-${b.dataset.saveTask}`)?.value.trim();
+      if (text) saveTaskEdit(b.dataset.saveTask, text);
+    }));
+    document.querySelectorAll('[data-cancel-task]').forEach(b => b.addEventListener('click', () => { s.editingTaskId=null; render(); }));
     document.querySelectorAll('[data-del-task]').forEach(b => b.addEventListener('click', () => deleteTask(b.dataset.delTask)));
   }
 
@@ -507,7 +515,7 @@
     s.loading=false;
     render();
     setInterval(async () => {
-      const editing = s.addingNote || s.addingTask || s.editingNoteId || s.editingDayNote;
+      const editing = s.addingNote || s.addingTask || s.editingNoteId || s.editingDayNote || s.editingTaskId;
       await loadAll();
       if (!editing) render();
     }, 15000);

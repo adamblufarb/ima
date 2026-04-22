@@ -184,17 +184,18 @@
   }
 
   async function loadAll() {
-    const [{ data: sched }, { data: notes }, { data: dn }, { data: tasks }] = await Promise.all([
+    const [schRes, notRes, dnRes, taskRes] = await Promise.all([
       db.from('schedule').select('*'),
       db.from('notes').select('*').order('created_at'),
       db.from('day_notes').select('*'),
       db.from('tasks').select('*').order('created_at'),
     ]);
-    s.schedule = rowsToSchedule(sched || []);
-    s.notes    = notes  || [];
-    s.tasks    = tasks  || [];
+    // Only overwrite schedule if no visitor write is in flight and data is valid
+    if (pendingWrites === 0 && schRes.data) s.schedule = rowsToSchedule(schRes.data);
+    if (notRes.data)  s.notes  = notRes.data;
+    if (taskRes.data) s.tasks  = taskRes.data;
     s.dayNotes = {};
-    for (const r of dn || []) s.dayNotes[r.date_key] = r.note;
+    for (const r of dnRes.data || []) s.dayNotes[r.date_key] = r.note;
   }
 
   let pendingWrites = 0;
@@ -209,7 +210,10 @@
     s.schedule = { ...s.schedule, [dateKey]: { ...day, [slotKey]: slot } };
     render();
     pendingWrites++;
-    await db.from('schedule').upsert({ date_key:dateKey, slot_key:slotKey, visitor_0:slot[0], visitor_1:slot[1], visitor_2:slot[2] });
+    await db.from('schedule').upsert(
+      { date_key:dateKey, slot_key:slotKey, visitor_0:slot[0], visitor_1:slot[1], visitor_2:slot[2] },
+      { onConflict: 'date_key,slot_key' }
+    );
     pendingWrites--;
   }
 

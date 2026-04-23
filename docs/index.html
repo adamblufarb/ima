@@ -197,8 +197,6 @@
     for (const r of dnRes.data || []) s.dayNotes[r.date_key] = r.note;
   }
 
-  let pendingWrites = 0;
-
   async function setVisitor(dateKey, slotKey, idx, name) {
     const day  = getDay(dateKey);
     const slot = [day[slotKey]?.[0]||'', day[slotKey]?.[1]||'', day[slotKey]?.[2]||''];
@@ -207,24 +205,8 @@
       if (i !== idx && slot[i] && slot[i] === name) slot[i] = '';
     }
     s.schedule = { ...s.schedule, [dateKey]: { ...day, [slotKey]: slot } };
-    // Don't re-render — the browser already set the chosen select's value.
-    // Just sync the other two selects in this slot (dedup clearing).
-    for (let i = 0; i < 3; i++) {
-      if (i !== idx) {
-        const el = document.querySelector(`.visitor-select[data-date="${dateKey}"][data-slot="${slotKey}"][data-idx="${i}"]`);
-        if (el) el.value = slot[i];
-      }
-    }
-    pendingWrites++;
-    const { data: updated } = await db.from('schedule')
-      .update({ visitor_0:slot[0], visitor_1:slot[1], visitor_2:slot[2] })
-      .eq('date_key', dateKey).eq('slot_key', slotKey)
-      .select('date_key');
-    if (!updated || updated.length === 0) {
-      await db.from('schedule')
-        .insert({ date_key:dateKey, slot_key:slotKey, visitor_0:slot[0], visitor_1:slot[1], visitor_2:slot[2] });
-    }
-    pendingWrites--;
+    render();
+    await db.from('schedule').upsert({ date_key:dateKey, slot_key:slotKey, visitor_0:slot[0], visitor_1:slot[1], visitor_2:slot[2] });
   }
 
   async function saveDayNote(dateKey, text) {
@@ -576,9 +558,8 @@
     s.loading=false;
     render();
     setInterval(async () => {
-      if (pendingWrites > 0) return;
-      await loadAll();
       const editing = s.addingNote || s.addingTask || s.editingNoteId || s.editingDayNote || s.editingTaskId;
+      await loadAll();
       if (!editing) render();
     }, 15000);
   }

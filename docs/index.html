@@ -282,8 +282,9 @@
 
   function getDay(k) { return s.schedule[k] || {morning:[],noon:[],evening:[]}; }
   function sortedNotes() {
-    const by = (a,b) => a.created_at.localeCompare(b.created_at);
-    return [...s.notes.filter(n=>n.pinned).sort(by), ...s.notes.filter(n=>!n.pinned).sort(by)];
+    const asc = (a,b) => a.created_at.localeCompare(b.created_at);
+    const desc = (a,b) => b.created_at.localeCompare(a.created_at);
+    return [...s.notes.filter(n=>n.pinned).sort(asc), ...s.notes.filter(n=>!n.pinned).sort(desc)];
   }
   function sortedTasks() {
     const by = (a,b) => a.created_at.localeCompare(b.created_at);

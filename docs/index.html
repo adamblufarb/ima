@@ -465,7 +465,6 @@
                <button class="btn-danger" data-del-task="${t.id}">מחק</button>
              </div>`
           : `<p class="task-text">${esc(t.text)}</p>`}
-        <div class="task-meta">${fmtTime(t.created_at)}</div>
       </div>
       ${!editing ? `<button class="note-edit-btn" data-edit-task="${t.id}">ערוך</button>` : ''}
     </div>`;

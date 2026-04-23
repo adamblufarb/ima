@@ -98,6 +98,7 @@
     .pin-btn { font-size: 20px; background: none; border: none; cursor: pointer; line-height: 1; padding: 0; opacity: 0.2; transition: opacity 0.15s, transform 0.15s; }
     .pin-btn:hover { opacity: 0.5; }
     .pin-btn.pinned { opacity: 1; transform: scale(1.1); }
+    .note-date { font-size: 11px; color: #a1a1aa; flex: 1; text-align: center; }
     .note-edit-btn { font-size: 12px; background: none; border: none; color: #71717a; cursor: pointer; font-family: inherit; transition: color 0.15s; }
     .note-edit-btn:hover { color: #f97316; }
     .note-text { font-size: 14px; color: #3f3f46; line-height: 1.6; white-space: pre-wrap; }
@@ -475,6 +476,8 @@
     return `<div class="note-card ${n.pinned?'pinned':''}">
       <div class="note-card-top">
         <button class="pin-btn ${n.pinned?'pinned':''}" data-pin="${n.id}">📌</button>
+        <span class="note-date">${fmtTime(n.created_at)}${n.edited_at?` · נערך ${fmtTime(n.edited_at)}`:''}
+        </span>
         ${!editing?`<button class="note-edit-btn" data-edit="${n.id}">ערוך</button>`:''}
       </div>
       ${editing
@@ -486,8 +489,7 @@
            </div>`
         : `<p class="note-text">${esc(n.text)}</p>`}
       <div class="note-meta">
-        <span>נוסף ע״י <span class="author">${esc(n.author)}</span> · ${fmtTime(n.created_at)}</span>
-        ${n.edited_at?`<span>נערך לאחרונה: ${fmtTime(n.edited_at)}</span>`:''}
+        <span>נוסף ע״י <span class="author">${esc(n.author)}</span></span>
       </div>
     </div>`;
   }

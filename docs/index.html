@@ -431,7 +431,7 @@
 
     const taskForm = s.addingTask ? `
       <div class="task-form">
-        <textarea id="tt" rows="2" placeholder="מה צריך לעשות?"></textarea>
+        <textarea id="tt" rows="3" placeholder="מה צריך לעשות?"></textarea>
         <div class="btn-row">
           <button class="btn-primary green" id="ts">שמור משימה</button>
           <button class="btn-secondary" id="tc">ביטול</button>
@@ -459,7 +459,7 @@
       <button class="task-check ${t.completed?'done':''}" data-check="${t.id}">${t.completed?'✓':''}</button>
       <div class="task-body">
         ${editing
-          ? `<textarea id="et-task-${t.id}" rows="2">${esc(t.text)}</textarea>
+          ? `<textarea id="et-task-${t.id}" rows="3">${esc(t.text)}</textarea>
              <div class="btn-row" style="margin-top:8px">
                <button class="btn-primary green" data-save-task="${t.id}">שמור</button>
                <button class="btn-secondary" data-cancel-task="${t.id}">ביטול</button>

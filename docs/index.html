@@ -532,12 +532,11 @@
           <p class="comment-text">${esc(c.text)}</p>
           <div class="comment-meta">
             <span class="comment-author">${esc(c.author)}</span> · ${fmtTime(c.created_at)}
-            <button class="comment-del-btn" data-del-comment="${c.id}" data-comment-note="${n.id}">×</button>
           </div>
         </div>`).join('')}
       ${s.addingCommentToNote===n.id
         ? `<div class="comment-form">
-             <textarea id="ct-${n.id}" rows="2" placeholder="כתוב תגובה..."></textarea>
+             <textarea id="ct-${n.id}" rows="5" placeholder="כתוב תגובה..."></textarea>
              <select class="author-select" id="ca-${n.id}" dir="rtl">
                <option value="">— מי מגיב? —</option>
                ${PEOPLE.map(p=>`<option>${p}</option>`).join('')}

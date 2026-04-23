@@ -418,7 +418,7 @@
 
     const noteForm = s.addingNote ? `
       <div class="note-form">
-        <textarea id="nt" rows="5" placeholder="מה חשוב לזכור?"></textarea>
+        <textarea id="nt" rows="7" placeholder="מה חשוב לזכור?"></textarea>
         <select class="author-select" id="na" dir="rtl">
           <option value="">— מי מוסיף? —</option>
           ${PEOPLE.map(p=>`<option>${p}</option>`).join('')}
@@ -481,7 +481,7 @@
         ${!editing?`<button class="note-edit-btn" data-edit="${n.id}">ערוך</button>`:''}
       </div>
       ${editing
-        ? `<textarea id="et-${n.id}" rows="5">${esc(n.text)}</textarea>
+        ? `<textarea id="et-${n.id}" rows="7">${esc(n.text)}</textarea>
            <div class="btn-row">
              <button class="btn-primary" data-save="${n.id}">שמור</button>
              <button class="btn-secondary" data-cancel="${n.id}">ביטול</button>

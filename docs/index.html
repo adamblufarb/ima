@@ -149,6 +149,17 @@
     .empty-state { text-align: center; padding: 48px 16px; color: #a1a1aa; }
     .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
     .section-label { font-size: 11px; font-weight: 600; color: #a1a1aa; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; margin-top: 4px; }
+
+    /* Comments */
+    .comment { border-top: 1px solid #f4f4f5; padding-top: 8px; margin-top: 6px; }
+    .comment-text { font-size: 13px; color: #52525b; line-height: 1.5; white-space: pre-wrap; }
+    .comment-meta { font-size: 11px; color: #a1a1aa; margin-top: 3px; display: flex; align-items: center; gap: 4px; }
+    .comment-author { color: #71717a; font-weight: 500; }
+    .comment-del-btn { margin-right: auto; background: none; border: none; cursor: pointer; font-size: 14px; color: #d4d4d8; transition: color 0.15s; font-family: inherit; line-height: 1; padding: 0; }
+    .comment-del-btn:hover { color: #ef4444; }
+    .add-comment-btn { font-size: 12px; color: #a1a1aa; background: none; border: none; cursor: pointer; font-family: inherit; padding: 6px 0 0; transition: color 0.15s; display: block; }
+    .add-comment-btn:hover { color: #f97316; }
+    .comment-form { border-top: 1px solid #f4f4f5; padding-top: 10px; margin-top: 6px; display: flex; flex-direction: column; gap: 8px; }
   </style>
 </head>
 <body>
@@ -171,6 +182,8 @@
     loading: true,
     addingNote: false, addingTask: false,
     editingNoteId: null, editingDayNote: null, editingTaskId: null,
+    addingCommentToNote: null,
+    comments: {},
   };
 
   // ── Supabase ───────────────────────────────────────────────────────────────
@@ -185,17 +198,25 @@
   }
 
   async function loadAll() {
-    const [schRes, notRes, dnRes, taskRes] = await Promise.all([
+    const [schRes, notRes, dnRes, taskRes, commRes] = await Promise.all([
       db.from('schedule').select('*'),
       db.from('notes').select('*').order('created_at'),
       db.from('day_notes').select('*'),
       db.from('tasks').select('*').order('created_at'),
+      db.from('note_comments').select('*').order('created_at'),
     ]);
     if (schRes.data)  s.schedule = rowsToSchedule(schRes.data);
-    if (notRes.data)  s.notes   = notRes.data;
-    if (taskRes.data) s.tasks   = taskRes.data;
+    if (notRes.data)  s.notes    = notRes.data;
+    if (taskRes.data) s.tasks    = taskRes.data;
     s.dayNotes = {};
     for (const r of dnRes.data || []) s.dayNotes[r.date_key] = r.note;
+    if (commRes.data) {
+      s.comments = {};
+      for (const r of commRes.data) {
+        if (!s.comments[r.note_id]) s.comments[r.note_id] = [];
+        s.comments[r.note_id].push(r);
+      }
+    }
   }
 
   async function setVisitor(dateKey, slotKey, idx, name) {
@@ -242,6 +263,21 @@
   async function deleteNote(id) {
     s.notes=s.notes.filter(n=>n.id!==id); s.editingNoteId=null; render();
     await db.from('notes').delete().eq('id', id);
+  }
+
+  async function addComment(noteId, text, author) {
+    const c = { id:Date.now().toString(), note_id:noteId, text, author, created_at:new Date().toISOString() };
+    if (!s.comments[noteId]) s.comments[noteId] = [];
+    s.comments[noteId].push(c);
+    s.addingCommentToNote = null;
+    render();
+    await db.from('note_comments').insert(c);
+  }
+
+  async function deleteComment(id, noteId) {
+    s.comments[noteId] = (s.comments[noteId]||[]).filter(c=>c.id!==id);
+    render();
+    await db.from('note_comments').delete().eq('id', id);
   }
 
   async function addTask(text) {
@@ -491,6 +527,27 @@
       <div class="note-meta">
         <span>נוסף ע״י <span class="author">${esc(n.author)}</span></span>
       </div>
+      ${(s.comments[n.id]||[]).map(c=>`
+        <div class="comment">
+          <p class="comment-text">${esc(c.text)}</p>
+          <div class="comment-meta">
+            <span class="comment-author">${esc(c.author)}</span> · ${fmtTime(c.created_at)}
+            <button class="comment-del-btn" data-del-comment="${c.id}" data-comment-note="${n.id}">×</button>
+          </div>
+        </div>`).join('')}
+      ${s.addingCommentToNote===n.id
+        ? `<div class="comment-form">
+             <textarea id="ct-${n.id}" rows="2" placeholder="כתוב תגובה..."></textarea>
+             <select class="author-select" id="ca-${n.id}" dir="rtl">
+               <option value="">— מי מגיב? —</option>
+               ${PEOPLE.map(p=>`<option>${p}</option>`).join('')}
+             </select>
+             <div class="btn-row">
+               <button class="btn-primary" data-save-comment="${n.id}">שמור</button>
+               <button class="btn-secondary" data-cancel-comment="${n.id}">ביטול</button>
+             </div>
+           </div>`
+        : `<button class="add-comment-btn" data-add-comment="${n.id}">+ תגובה</button>`}
     </div>`;
   }
 
@@ -548,6 +605,18 @@
     document.querySelectorAll('[data-del-task]').forEach(b => b.addEventListener('click', () => deleteTask(b.dataset.delTask)));
 
     document.querySelectorAll('[data-cal-date]').forEach(b => b.addEventListener('click', () => addToCalendar(b.dataset.calDate, b.dataset.calSlot)));
+
+    document.querySelectorAll('[data-add-comment]').forEach(b => b.addEventListener('click', () => {
+      s.addingCommentToNote=b.dataset.addComment; render(); setTimeout(()=>document.getElementById(`ct-${s.addingCommentToNote}`)?.focus(),0);
+    }));
+    document.querySelectorAll('[data-save-comment]').forEach(b => b.addEventListener('click', () => {
+      const noteId=b.dataset.saveComment;
+      const text=document.getElementById(`ct-${noteId}`)?.value.trim();
+      const author=document.getElementById(`ca-${noteId}`)?.value;
+      if (text&&author) addComment(noteId,text,author);
+    }));
+    document.querySelectorAll('[data-cancel-comment]').forEach(b => b.addEventListener('click', () => { s.addingCommentToNote=null; render(); }));
+    document.querySelectorAll('[data-del-comment]').forEach(b => b.addEventListener('click', () => deleteComment(b.dataset.delComment, b.dataset.commentNote)));
   }
 
   // ── Init ───────────────────────────────────────────────────────────────────
@@ -558,7 +627,7 @@
     s.loading=false;
     render();
     setInterval(async () => {
-      const editing = s.addingNote || s.addingTask || s.editingNoteId || s.editingDayNote || s.editingTaskId;
+      const editing = s.addingNote || s.addingTask || s.editingNoteId || s.editingDayNote || s.editingTaskId || s.addingCommentToNote;
       await loadAll();
       if (!editing) render();
     }, 15000);

@@ -190,10 +190,9 @@
       db.from('day_notes').select('*'),
       db.from('tasks').select('*').order('created_at'),
     ]);
-    // Only overwrite schedule if no visitor write is in flight and data is valid
-    if (pendingWrites === 0 && schRes.data) s.schedule = rowsToSchedule(schRes.data);
-    if (notRes.data)  s.notes  = notRes.data;
-    if (taskRes.data) s.tasks  = taskRes.data;
+    if (schRes.data)  s.schedule = rowsToSchedule(schRes.data);
+    if (notRes.data)  s.notes   = notRes.data;
+    if (taskRes.data) s.tasks   = taskRes.data;
     s.dayNotes = {};
     for (const r of dnRes.data || []) s.dayNotes[r.date_key] = r.note;
   }
@@ -217,10 +216,14 @@
       }
     }
     pendingWrites++;
-    await db.from('schedule').upsert(
-      { date_key:dateKey, slot_key:slotKey, visitor_0:slot[0], visitor_1:slot[1], visitor_2:slot[2] },
-      { onConflict: 'date_key,slot_key' }
-    );
+    const { data: updated } = await db.from('schedule')
+      .update({ visitor_0:slot[0], visitor_1:slot[1], visitor_2:slot[2] })
+      .eq('date_key', dateKey).eq('slot_key', slotKey)
+      .select('date_key');
+    if (!updated || updated.length === 0) {
+      await db.from('schedule')
+        .insert({ date_key:dateKey, slot_key:slotKey, visitor_0:slot[0], visitor_1:slot[1], visitor_2:slot[2] });
+    }
     pendingWrites--;
   }
 
@@ -574,8 +577,8 @@
     render();
     setInterval(async () => {
       if (pendingWrites > 0) return;
-      const editing = s.addingNote || s.addingTask || s.editingNoteId || s.editingDayNote || s.editingTaskId;
       await loadAll();
+      const editing = s.addingNote || s.addingTask || s.editingNoteId || s.editingDayNote || s.editingTaskId;
       if (!editing) render();
     }, 15000);
   }

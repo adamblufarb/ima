@@ -542,8 +542,9 @@
       <div class="slot-header"><div style="display:flex;align-items:baseline;gap:6px"><span class="slot-label">${label}</span><span class="slot-time">${time}</span></div>${calBtn}</div>
       <div class="visitor-row"><span class="visitor-label">מבקר 1</span>${dd(0,v0,v1)}</div>
       <div class="visitor-row"><span class="visitor-label">מבקר 2</span>${dd(1,v1,v0)}</div>
+      ${slotKey !== 'morning' ? `
       <div class="visitor-row"><span class="visitor-label" style="color:#a1a1aa;font-weight:400">אורח 1</span>${guestInput(2,v2)}</div>
-      <div class="visitor-row"><span class="visitor-label" style="color:#a1a1aa;font-weight:400">אורח 2</span>${guestInput(3,v3)}</div>
+      <div class="visitor-row"><span class="visitor-label" style="color:#a1a1aa;font-weight:400">אורח 2</span>${guestInput(3,v3)}</div>` : ''}
     </div>`;
   }
 

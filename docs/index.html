@@ -496,8 +496,9 @@
       const opts = PEOPLE.filter(p=>p!==ex1).map(p=>`<option value="${p}"${p===val?' selected':''}>${p}</option>`).join('');
       return `<select class="visitor-select" data-date="${dateKey}" data-slot="${slotKey}" data-idx="${idx}"><option value="">—</option>${opts}</select>`;
     };
+    const guestRo = ro || isToday(dateKey);
     const guestInput = (idx, val) => {
-      if (ro) return `<span class="visitor-readonly ${val?'filled':'empty'}">${val||'—'}</span>`;
+      if (guestRo) return `<span class="visitor-readonly ${val?'filled':'empty'}">${val||'—'}</span>`;
       return `<input type="text" class="guest-input" data-guest-date="${dateKey}" data-guest-slot="${slotKey}" data-guest-idx="${idx}" value="${esc(val)}" placeholder="שם אורח">`;
     };
     const calBtn = !ro ? `<button class="cal-btn" data-cal-date="${dateKey}" data-cal-slot="${slotKey}">הוסף ללוח שנה</button>` : '';

@@ -164,6 +164,12 @@
     .guest-input:focus { border-color: #34d399; }
     .guest-input::placeholder { color: #a1a1aa; }
 
+    /* Remove guest modal */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 100; display: flex; align-items: center; justify-content: center; }
+    .modal-box { background: #ffffff; border-radius: 16px; padding: 24px; max-width: 280px; width: 90%; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.18); }
+    .modal-title { font-size: 15px; font-weight: 700; color: #27272a; text-align: center; }
+    .modal-error { font-size: 13px; color: #ef4444; text-align: center; }
+
     /* Password gate */
     .password-gate { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 60px 16px; }
     .password-title { font-size: 22px; font-weight: 700; color: #27272a; }
@@ -207,6 +213,7 @@
     addingCommentToNote: null,
     comments: {},
     notesUnlocked: false, notesPasswordError: false,
+    removingGuest: null, removingGuestError: false,
   };
 
   // ── Supabase ───────────────────────────────────────────────────────────────
@@ -272,6 +279,16 @@
     render();
     if (t) { await db.from('day_notes').upsert({ date_key:'_info_', note:t }); }
     else   { await db.from('day_notes').delete().eq('date_key', '_info_'); }
+  }
+
+  async function removeGuest(dateKey, slotKey, idx) {
+    const day  = getDay(dateKey);
+    const slot = [day[slotKey]?.[0]||'', day[slotKey]?.[1]||'', day[slotKey]?.[2]||'', day[slotKey]?.[3]||''];
+    slot[idx] = '';
+    s.schedule = { ...s.schedule, [dateKey]: { ...day, [slotKey]: slot } };
+    s.removingGuest = null; s.removingGuestError = false;
+    render();
+    await db.from('schedule').upsert({ date_key:dateKey, slot_key:slotKey, visitor_0:slot[0], visitor_1:slot[1], visitor_2:slot[2], visitor_3:slot[3] });
   }
 
   async function saveDayNote(dateKey, text) {
@@ -406,6 +423,21 @@
 
   // ── Render ─────────────────────────────────────────────────────────────────
 
+  function htmlRemoveGuestModal() {
+    if (!s.removingGuest) return '';
+    return `<div class="modal-overlay" id="rg-overlay">
+      <div class="modal-box">
+        <p class="modal-title">הסרת אורח</p>
+        <input type="password" id="rg-pw" class="pw-input" placeholder="סיסמא" style="width:100%;text-align:right">
+        ${s.removingGuestError ? `<p class="modal-error">סיסמא שגויה</p>` : ''}
+        <div class="btn-row">
+          <button class="btn-danger" id="rg-confirm">הסר</button>
+          <button class="btn-secondary" id="rg-cancel">ביטול</button>
+        </div>
+      </div>
+    </div>`;
+  }
+
   function render() { document.getElementById('app').innerHTML = htmlApp(); bind(); }
 
   function htmlApp() {
@@ -427,7 +459,8 @@
         ${!s.loading && s.tab==='visits'  ? htmlVisits() : ''}
         ${!s.loading && s.tab==='archive' ? htmlArchive(archiveDates) : ''}
         ${!s.loading && s.tab==='notes'   ? htmlNotesTab() : ''}
-      </main>`;
+      </main>
+      ${htmlRemoveGuestModal()}`;
   }
 
   function htmlGeneralInfo() {
@@ -498,7 +531,10 @@
     };
     const guestRo = ro || isToday(dateKey);
     const guestInput = (idx, val) => {
-      if (guestRo) return `<span class="visitor-readonly ${val?'filled':'empty'}">${val||'—'}</span>`;
+      if (guestRo) {
+        if (val) return `<span class="visitor-readonly guest-locked" data-guest-date="${dateKey}" data-guest-slot="${slotKey}" data-guest-idx="${idx}">${esc(val)}</span>`;
+        return `<span class="visitor-readonly empty">—</span>`;
+      }
       return `<input type="text" class="guest-input" data-guest-date="${dateKey}" data-guest-slot="${slotKey}" data-guest-idx="${idx}" value="${esc(val)}" placeholder="שם אורח">`;
     };
     const calBtn = !ro ? `<button class="cal-btn" data-cal-date="${dateKey}" data-cal-slot="${slotKey}">הוסף ללוח שנה</button>` : '';
@@ -684,6 +720,34 @@
 
     document.querySelectorAll('.guest-input').forEach(inp =>
       inp.addEventListener('blur', () => setGuest(inp.dataset.guestDate, inp.dataset.guestSlot, +inp.dataset.guestIdx, inp.value.trim())));
+
+    let lpTimer = null;
+    document.querySelectorAll('.guest-locked').forEach(span => {
+      const openModal = () => {
+        s.removingGuest = { dateKey:span.dataset.guestDate, slotKey:span.dataset.guestSlot, idx:+span.dataset.guestIdx };
+        s.removingGuestError = false;
+        render();
+        setTimeout(() => document.getElementById('rg-pw')?.focus(), 0);
+      };
+      span.addEventListener('touchstart', e => { e.preventDefault(); lpTimer = setTimeout(openModal, 500); }, { passive:false });
+      span.addEventListener('touchend',   () => clearTimeout(lpTimer));
+      span.addEventListener('touchmove',  () => clearTimeout(lpTimer));
+      span.addEventListener('mousedown',  () => { lpTimer = setTimeout(openModal, 500); });
+      span.addEventListener('mouseup',    () => clearTimeout(lpTimer));
+      span.addEventListener('mouseleave', () => clearTimeout(lpTimer));
+    });
+
+    const rgConfirm = () => {
+      const pw = document.getElementById('rg-pw')?.value;
+      if (pw === 'אמא') { removeGuest(s.removingGuest.dateKey, s.removingGuest.slotKey, s.removingGuest.idx); }
+      else { s.removingGuestError=true; render(); setTimeout(()=>document.getElementById('rg-pw')?.focus(),0); }
+    };
+    document.getElementById('rg-confirm')?.addEventListener('click', rgConfirm);
+    document.getElementById('rg-pw')?.addEventListener('keydown', e => { if (e.key==='Enter') rgConfirm(); });
+    document.getElementById('rg-cancel')?.addEventListener('click', () => { s.removingGuest=null; s.removingGuestError=false; render(); });
+    document.getElementById('rg-overlay')?.addEventListener('click', e => {
+      if (e.target.id==='rg-overlay') { s.removingGuest=null; s.removingGuestError=false; render(); }
+    });
 
     document.getElementById('gi-add')?.addEventListener('click', () => { s.editingGeneralInfo=true; render(); setTimeout(()=>document.getElementById('gi-text')?.focus(),0); });
     document.getElementById('gi-edit')?.addEventListener('click', () => { s.editingGeneralInfo=true; render(); setTimeout(()=>document.getElementById('gi-text')?.focus(),0); });

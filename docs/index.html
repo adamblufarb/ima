@@ -599,8 +599,7 @@
     const closedSection = closedTasks.length ? `
       <div class="section-label closed-tasks-toggle" id="closed-tasks-toggle" style="cursor:pointer;user-select:none;display:flex;align-items:center;gap:6px;margin-top:${openTasks.length?'14px':'0'}">
         <span>משימות סגורות</span>
-        <span style="font-size:13px;color:#a1a1aa">(${closedTasks.length})</span>
-        <span style="margin-right:auto;font-size:14px;color:#a1a1aa">${s.tasksClosedOpen ? '−' : '+'}</span>
+        <span style="font-size:14px;color:#a1a1aa">${s.tasksClosedOpen ? '−' : '+'}</span>
       </div>
       ${s.tasksClosedOpen ? closedTasks.map(t=>htmlTask(t)).join('') : ''}` : '';
 

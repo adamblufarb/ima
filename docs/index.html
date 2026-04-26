@@ -214,6 +214,7 @@
     comments: {},
     notesUnlocked: false, notesPasswordError: false,
     removingGuest: null, removingGuestError: false,
+    tasksClosedOpen: false,
   };
 
   // ── Supabase ───────────────────────────────────────────────────────────────
@@ -588,19 +589,30 @@
         </div>
       </div>` : '';
 
-    const taskCards = tasks.length ? `
-      <div class="section-label">משימות</div>
-      ${tasks.map(t=>htmlTask(t)).join('')}` : '';
+    const openTasks   = tasks.filter(t => !t.completed).sort((a,b) => a.created_at.localeCompare(b.created_at));
+    const closedTasks = tasks.filter(t =>  t.completed).sort((a,b) => b.created_at.localeCompare(a.created_at));
+
+    const openSection = openTasks.length ? `
+      <div class="section-label">משימות פתוחות</div>
+      ${openTasks.map(t=>htmlTask(t)).join('')}` : '';
+
+    const closedSection = closedTasks.length ? `
+      <div class="section-label closed-tasks-toggle" id="closed-tasks-toggle" style="cursor:pointer;user-select:none;display:flex;align-items:center;gap:6px;margin-top:${openTasks.length?'14px':'0'}">
+        <span>משימות סגורות</span>
+        <span style="font-size:13px;color:#a1a1aa">(${closedTasks.length})</span>
+        <span style="margin-right:auto;font-size:14px;color:#a1a1aa">${s.tasksClosedOpen ? '−' : '+'}</span>
+      </div>
+      ${s.tasksClosedOpen ? closedTasks.map(t=>htmlTask(t)).join('') : ''}` : '';
 
     const noteCards = notes.length ? `
-      <div class="section-label" style="margin-top:${tasks.length?'14px':'0'}">פתקים</div>
+      <div class="section-label" style="margin-top:${(openTasks.length||closedTasks.length)?'14px':'0'}">פתקים</div>
       ${notes.map(n=>htmlNote(n)).join('')}` : '';
 
     const empty = !tasks.length && !notes.length
       ? `<div class="empty-state"><div class="icon">📝</div><p>אין פתקים או משימות עדיין</p></div>`
       : '';
 
-    return addButtons + noteForm + taskForm + taskCards + noteCards + empty;
+    return addButtons + noteForm + taskForm + openSection + closedSection + noteCards + empty;
   }
 
   function htmlTask(t) {
@@ -716,6 +728,8 @@
     }));
     document.querySelectorAll('[data-cancel-task]').forEach(b => b.addEventListener('click', () => { s.editingTaskId=null; render(); }));
     document.querySelectorAll('[data-del-task]').forEach(b => b.addEventListener('click', () => deleteTask(b.dataset.delTask)));
+
+    document.getElementById('closed-tasks-toggle')?.addEventListener('click', () => { s.tasksClosedOpen=!s.tasksClosedOpen; render(); });
 
     document.querySelectorAll('[data-cal-date]').forEach(b => b.addEventListener('click', () => addToCalendar(b.dataset.calDate, b.dataset.calSlot)));
 

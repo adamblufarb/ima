@@ -428,7 +428,7 @@
     if (!s.removingGuest) return '';
     return `<div class="modal-overlay" id="rg-overlay">
       <div class="modal-box">
-        <p class="modal-title">הסרת אורח</p>
+        <p class="modal-title">הסרת מבקר</p>
         <input type="password" id="rg-pw" class="pw-input" placeholder="סיסמא" style="width:100%;text-align:right">
         ${s.removingGuestError ? `<p class="modal-error">סיסמא שגויה</p>` : ''}
         <div class="btn-row">
@@ -467,7 +467,7 @@
   function htmlGeneralInfo() {
     if (s.editingGeneralInfo) {
       return `<div class="general-info-form">
-        <textarea id="gi-text" rows="3" placeholder="כתובת, הוראות לאורחים...">${esc(s.generalInfo)}</textarea>
+        <textarea id="gi-text" rows="3" placeholder="כתובת, הוראות למבקרים...">${esc(s.generalInfo)}</textarea>
         <div class="btn-row">
           <button class="btn-primary" id="gi-save">שמור</button>
           <button class="btn-secondary" id="gi-cancel">ביטול</button>
@@ -481,7 +481,7 @@
         <button class="general-info-edit-btn" id="gi-edit">ערוך</button>
       </div>`;
     }
-    return `<button class="general-info-add-btn" id="gi-add">+ הוסף מידע כללי לאורחים</button>`;
+    return `<button class="general-info-add-btn" id="gi-add">+ הוסף מידע כללי למבקרים</button>`;
   }
 
   function htmlVisits() { return htmlGeneralInfo() + weekKeys().map(k=>htmlDay(k,false)).join(''); }
@@ -536,16 +536,16 @@
         if (val) return `<span class="visitor-readonly guest-locked" data-guest-date="${dateKey}" data-guest-slot="${slotKey}" data-guest-idx="${idx}">${esc(val)}</span>`;
         return `<span class="visitor-readonly empty">—</span>`;
       }
-      return `<input type="text" class="guest-input" data-guest-date="${dateKey}" data-guest-slot="${slotKey}" data-guest-idx="${idx}" value="${esc(val)}" placeholder="שם אורח">`;
+      return `<input type="text" class="guest-input" data-guest-date="${dateKey}" data-guest-slot="${slotKey}" data-guest-idx="${idx}" value="${esc(val)}" placeholder="שם מבקר">`;
     };
     const calBtn = !ro ? `<button class="cal-btn" data-cal-date="${dateKey}" data-cal-slot="${slotKey}">הוסף ללוח שנה</button>` : '';
     return `<div class="slot-card">
       <div class="slot-header"><div style="display:flex;align-items:baseline;gap:6px"><span class="slot-label">${label}</span><span class="slot-time">${time}</span></div>${calBtn}</div>
-      <div class="visitor-row"><span class="visitor-label">מבקר 1</span>${dd(0,v0,v1)}</div>
-      <div class="visitor-row"><span class="visitor-label">מבקר 2</span>${dd(1,v1,v0)}</div>
+      <div class="visitor-row"><span class="visitor-label">משפחה 1</span>${dd(0,v0,v1)}</div>
+      <div class="visitor-row"><span class="visitor-label">משפחה 2</span>${dd(1,v1,v0)}</div>
       ${slotKey !== 'morning' ? `
-      <div class="visitor-row"><span class="visitor-label" style="color:#a1a1aa;font-weight:400">אורח 1</span>${guestInput(2,v2)}</div>
-      <div class="visitor-row"><span class="visitor-label" style="color:#a1a1aa;font-weight:400">אורח 2</span>${guestInput(3,v3)}</div>` : ''}
+      <div class="visitor-row"><span class="visitor-label" style="color:#a1a1aa;font-weight:400">מבקר 1</span>${guestInput(2,v2)}</div>
+      <div class="visitor-row"><span class="visitor-label" style="color:#a1a1aa;font-weight:400">מבקר 2</span>${guestInput(3,v3)}</div>` : ''}
     </div>`;
   }
 

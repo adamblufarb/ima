@@ -213,7 +213,7 @@
     addingCommentToNote: null,
     comments: {},
     notesUnlocked: false, notesPasswordError: false,
-    removingGuest: null, removingGuestError: false,
+    removingGuest: null, removingGuestError: false, removingGuestUnlocked: false, removingGuestRename: false,
     tasksClosedOpen: false,
   };
 
@@ -287,7 +287,7 @@
     const slot = [day[slotKey]?.[0]||'', day[slotKey]?.[1]||'', day[slotKey]?.[2]||'', day[slotKey]?.[3]||''];
     slot[idx] = '';
     s.schedule = { ...s.schedule, [dateKey]: { ...day, [slotKey]: slot } };
-    s.removingGuest = null; s.removingGuestError = false;
+    s.removingGuest = null; s.removingGuestError = false; s.removingGuestUnlocked = false; s.removingGuestRename = false;
     render();
     await db.from('schedule').upsert({ date_key:dateKey, slot_key:slotKey, visitor_0:slot[0], visitor_1:slot[1], visitor_2:slot[2], visitor_3:slot[3] });
   }
@@ -426,16 +426,36 @@
 
   function htmlRemoveGuestModal() {
     if (!s.removingGuest) return '';
-    return `<div class="modal-overlay" id="rg-overlay">
-      <div class="modal-box">
-        <p class="modal-title">הסרת מבקר</p>
+    let inner;
+    if (!s.removingGuestUnlocked) {
+      inner = `
+        <p class="modal-title">עריכת מבקר</p>
         <input type="password" id="rg-pw" class="pw-input" placeholder="סיסמא" style="width:100%;text-align:right">
         ${s.removingGuestError ? `<p class="modal-error">סיסמא שגויה</p>` : ''}
         <div class="btn-row">
-          <button class="btn-danger" id="rg-confirm">הסר</button>
+          <button class="btn-primary" id="rg-pw-submit">כניסה</button>
           <button class="btn-secondary" id="rg-cancel">ביטול</button>
-        </div>
-      </div>
+        </div>`;
+    } else if (s.removingGuestRename) {
+      const cur = getDay(s.removingGuest.dateKey)[s.removingGuest.slotKey]?.[s.removingGuest.idx] || '';
+      inner = `
+        <p class="modal-title">שינוי שם מבקר</p>
+        <input type="text" id="rg-new-name" class="pw-input" value="${esc(cur)}" style="width:100%;text-align:right" placeholder="שם חדש">
+        <div class="btn-row">
+          <button class="btn-primary" id="rg-rename-save">שמור</button>
+          <button class="btn-secondary" id="rg-cancel">ביטול</button>
+        </div>`;
+    } else {
+      inner = `
+        <p class="modal-title">מה לעשות?</p>
+        <div class="btn-row" style="flex-direction:column;gap:8px">
+          <button class="btn-primary" id="rg-rename">שנה שם</button>
+          <button class="btn-danger" id="rg-confirm">הסר שם</button>
+          <button class="btn-secondary" id="rg-cancel">ביטול</button>
+        </div>`;
+    }
+    return `<div class="modal-overlay" id="rg-overlay">
+      <div class="modal-box">${inner}</div>
     </div>`;
   }
 
@@ -751,17 +771,22 @@
       span.addEventListener('mouseleave', () => clearTimeout(lpTimer));
     });
 
-    const rgConfirm = () => {
-      const pw = document.getElementById('rg-pw')?.value;
-      if (pw === 'אמא') { removeGuest(s.removingGuest.dateKey, s.removingGuest.slotKey, s.removingGuest.idx); }
+    const rgReset = () => { s.removingGuest=null; s.removingGuestError=false; s.removingGuestUnlocked=false; s.removingGuestRename=false; render(); };
+    document.getElementById('rg-pw-submit')?.addEventListener('click', () => {
+      if (document.getElementById('rg-pw')?.value === 'אמא') { s.removingGuestUnlocked=true; s.removingGuestError=false; render(); }
       else { s.removingGuestError=true; render(); setTimeout(()=>document.getElementById('rg-pw')?.focus(),0); }
-    };
-    document.getElementById('rg-confirm')?.addEventListener('click', rgConfirm);
-    document.getElementById('rg-pw')?.addEventListener('keydown', e => { if (e.key==='Enter') rgConfirm(); });
-    document.getElementById('rg-cancel')?.addEventListener('click', () => { s.removingGuest=null; s.removingGuestError=false; render(); });
-    document.getElementById('rg-overlay')?.addEventListener('click', e => {
-      if (e.target.id==='rg-overlay') { s.removingGuest=null; s.removingGuestError=false; render(); }
     });
+    document.getElementById('rg-pw')?.addEventListener('keydown', e => { if (e.key==='Enter') document.getElementById('rg-pw-submit')?.click(); });
+    document.getElementById('rg-confirm')?.addEventListener('click', () => removeGuest(s.removingGuest.dateKey, s.removingGuest.slotKey, s.removingGuest.idx));
+    document.getElementById('rg-rename')?.addEventListener('click', () => { s.removingGuestRename=true; render(); setTimeout(()=>{ const el=document.getElementById('rg-new-name'); el?.focus(); el?.select(); },0); });
+    document.getElementById('rg-rename-save')?.addEventListener('click', () => {
+      const name = document.getElementById('rg-new-name')?.value.trim() || '';
+      setGuest(s.removingGuest.dateKey, s.removingGuest.slotKey, s.removingGuest.idx, name);
+      rgReset();
+    });
+    document.getElementById('rg-new-name')?.addEventListener('keydown', e => { if (e.key==='Enter') document.getElementById('rg-rename-save')?.click(); });
+    document.getElementById('rg-cancel')?.addEventListener('click', rgReset);
+    document.getElementById('rg-overlay')?.addEventListener('click', e => { if (e.target.id==='rg-overlay') rgReset(); });
 
     document.getElementById('gi-add')?.addEventListener('click', () => { s.editingGeneralInfo=true; render(); setTimeout(()=>document.getElementById('gi-text')?.focus(),0); });
     document.getElementById('gi-edit')?.addEventListener('click', () => { s.editingGeneralInfo=true; render(); setTimeout(()=>document.getElementById('gi-text')?.focus(),0); });

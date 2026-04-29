@@ -187,11 +187,18 @@
     .add-comment-btn { font-size: 12px; color: #a1a1aa; background: none; border: none; cursor: pointer; font-family: inherit; padding: 6px 0 0; transition: color 0.15s; display: block; }
     .add-comment-btn:hover { color: #f97316; }
     .comment-form { border-top: 1px solid #f4f4f5; padding-top: 10px; margin-top: 6px; display: flex; flex-direction: column; gap: 8px; }
+
+    /* Drag and drop */
+    .drag-handle { color: #d4d4d8; font-size: 18px; cursor: grab; flex-shrink: 0; align-self: center; padding: 0 2px; touch-action: none; user-select: none; }
+    .drag-handle:active { cursor: grabbing; }
+    .sortable-ghost { opacity: 0.25; }
+    .sortable-chosen { box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
   </style>
 </head>
 <body>
 <div id="app"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
 <script>
   const SUPABASE_URL = 'https://dhdfyycqmepzregkkymy.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRoZGZ5eWNxbWVwenJlZ2treW15Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4NzQ3NTMsImV4cCI6MjA5MjQ1MDc1M30.VXECtDHeixLPvPv3WdSarQ_ZwWvtO4OrxIqVBDC4Q-A';
@@ -342,9 +349,17 @@
   }
 
   async function addTask(text) {
-    const t = { id:Date.now().toString(), text, author:'', created_at:new Date().toISOString(), completed:false, pinned:false };
+    const positions = s.tasks.filter(t=>!t.completed && t.position!=null).map(t=>t.position);
+    const position = positions.length ? Math.min(...positions) - 1 : 0;
+    const t = { id:Date.now().toString(), text, author:'', created_at:new Date().toISOString(), completed:false, pinned:false, position };
     s.tasks.push(t); s.addingTask=false; render();
     await db.from('tasks').insert(t);
+  }
+
+  async function updateTaskOrder(orderedIds) {
+    orderedIds.forEach((id, i) => { const t = s.tasks.find(t=>t.id===id); if (t) t.position=i; });
+    render();
+    await Promise.all(orderedIds.map((id, i) => db.from('tasks').update({ position:i }).eq('id', id)));
   }
 
   async function toggleTaskComplete(id) {
@@ -609,12 +624,16 @@
         </div>
       </div>` : '';
 
-    const openTasks   = tasks.filter(t => !t.completed).sort((a,b) => b.created_at.localeCompare(a.created_at));
+    const openTasks = tasks.filter(t => !t.completed).sort((a,b) => {
+      const pa = a.position ?? Infinity, pb = b.position ?? Infinity;
+      if (pa !== pb) return pa - pb;
+      return b.created_at.localeCompare(a.created_at);
+    });
     const closedTasks = tasks.filter(t =>  t.completed).sort((a,b) => b.created_at.localeCompare(a.created_at));
 
     const openSection = openTasks.length ? `
       <div class="section-label">משימות פתוחות</div>
-      ${openTasks.map(t=>htmlTask(t)).join('')}` : '';
+      <div id="open-tasks-list">${openTasks.map(t=>htmlTask(t,true)).join('')}</div>` : '';
 
     const closedSection = closedTasks.length ? `
       <div class="section-label closed-tasks-toggle" id="closed-tasks-toggle" style="cursor:pointer;user-select:none;display:flex;align-items:center;gap:6px;margin-top:${openTasks.length?'14px':'0'}">
@@ -634,9 +653,9 @@
     return addButtons + noteForm + taskForm + openSection + closedSection + noteCards + empty;
   }
 
-  function htmlTask(t) {
+  function htmlTask(t, draggable=false) {
     const editing = s.editingTaskId === t.id;
-    return `<div class="task-card ${t.completed?'completed':''}">
+    return `<div class="task-card ${t.completed?'completed':''}" ${draggable?`data-task-id="${t.id}"`:''}>
       <button class="task-check ${t.completed?'done':''}" data-check="${t.id}">${t.completed?'✓':''}</button>
       <div class="task-body">
         ${editing
@@ -649,6 +668,7 @@
           : `<p class="task-text">${esc(t.text)}</p>`}
       </div>
       ${!editing ? `<button class="note-edit-btn" data-edit-task="${t.id}">ערוך</button>` : ''}
+      ${draggable && !editing ? `<span class="drag-handle">⠿</span>` : ''}
     </div>`;
   }
 
@@ -813,6 +833,21 @@
     }));
     document.querySelectorAll('[data-cancel-comment]').forEach(b => b.addEventListener('click', () => { s.addingCommentToNote=null; render(); }));
     document.querySelectorAll('[data-del-comment]').forEach(b => b.addEventListener('click', () => deleteComment(b.dataset.delComment, b.dataset.commentNote)));
+
+    const openList = document.getElementById('open-tasks-list');
+    if (openList && typeof Sortable !== 'undefined') {
+      new Sortable(openList, {
+        animation: 150,
+        handle: '.drag-handle',
+        ghostClass: 'sortable-ghost',
+        chosenClass: 'sortable-chosen',
+        onEnd(evt) {
+          if (evt.oldIndex === evt.newIndex) return;
+          const ids = [...openList.querySelectorAll('[data-task-id]')].map(el => el.dataset.taskId);
+          updateTaskOrder(ids);
+        }
+      });
+    }
   }
 
   // ── Init ───────────────────────────────────────────────────────────────────

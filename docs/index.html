@@ -824,6 +824,8 @@
       const hint = document.getElementById('av-hint-' + inp.id.replace('av-time-', ''));
       if (!hint) return;
       const update = () => { hint.style.display = inp.value ? 'none' : ''; };
+      inp.addEventListener('focus', () => { hint.style.display = 'none'; });
+      inp.addEventListener('blur', update);
       inp.addEventListener('change', update);
       inp.addEventListener('input', update);
       update();

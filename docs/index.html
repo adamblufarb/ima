@@ -38,11 +38,10 @@
     /* Day card */
     .day-card { background: #ffffff; border: 1px solid #e4e4e7; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
     .day-card.today { background: #ecfdf5; border-color: #6ee7b7; }
-    .day-card.tomorrow { background: #fff7ed; border-color: #fdba74; }
+
     .day-card-header { display: flex; align-items: center; gap: 8px; }
     .day-title { font-weight: 700; font-size: 15px; color: #18181b; }
     .day-card.today .day-title { color: #047857; }
-    .day-card.tomorrow .day-title { color: #c2410c; }
     .today-badge { font-size: 11px; background: #059669; color: white; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
     .tomorrow-badge { font-size: 11px; background: #f97316; color: white; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
     .day-note-add-btn { margin-right: auto; background: none; border: none; cursor: pointer; font-size: 12px; color: #52525b; font-family: inherit; padding: 2px 6px; border-radius: 6px; transition: background 0.15s, color 0.15s; }
@@ -622,7 +621,7 @@
              ${!ro?`<button class="day-note-edit-btn" data-edit-day="${k}">ערוך</button>`:''}
            </div>`
         : '';
-    const dayClass = isToday(k) ? 'today' : isTomorrow(k) ? 'tomorrow' : '';
+    const dayClass = isToday(k) ? 'today' : '';
     return `<div class="day-card ${dayClass}">
       <div class="day-card-header">
         <span class="day-title">${fmtDate(k)}</span>

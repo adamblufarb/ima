@@ -226,7 +226,7 @@
   const s = {
     tab: 'visits',
     schedule: {}, notes: [], dayNotes: {}, tasks: [],
-    visits: [], addingVisit: null,
+    visits: [], addingVisit: null, confirmDeleteVisit: null,
     generalInfo: '', editingGeneralInfo: false,
     loading: true,
     addingNote: false, addingTask: false,
@@ -312,7 +312,7 @@
   }
 
   async function deleteVisit(id) {
-    s.visits = s.visits.filter(v=>v.id!==id); render();
+    s.visits = s.visits.filter(v=>v.id!==id); s.confirmDeleteVisit=null; render();
     await db.from('visits').delete().eq('id', id);
   }
 
@@ -501,6 +501,25 @@
     </div>`;
   }
 
+  function htmlConfirmDeleteVisitModal() {
+    if (!s.confirmDeleteVisit) return '';
+    const v = s.confirmDeleteVisit;
+    return `<div class="modal-overlay" id="cdv-overlay">
+      <div class="modal-box">
+        <p class="modal-title">הסרת ביקור</p>
+        <p style="text-align:center;font-size:14px;color:#52525b">האם תרצה להסיר את הביקור?</p>
+        <div style="background:#f4f4f5;border-radius:10px;padding:10px 14px;text-align:center;display:flex;flex-direction:column;gap:4px">
+          <span style="font-size:15px;font-weight:600;color:#18181b">${esc(v.name)}</span>
+          <span style="font-size:13px;color:#52525b;direction:ltr;unicode-bidi:embed">${esc(v.visit_time)}</span>
+        </div>
+        <div class="btn-row">
+          <button class="btn-danger" id="cdv-confirm">הסר</button>
+          <button class="btn-secondary" id="cdv-cancel">ביטול</button>
+        </div>
+      </div>
+    </div>`;
+  }
+
   function render() { document.getElementById('app').innerHTML = htmlApp(); bind(); }
 
   function htmlApp() {
@@ -523,7 +542,8 @@
         ${!s.loading && s.tab==='archive' ? htmlArchive(archiveDates) : ''}
         ${!s.loading && s.tab==='notes'   ? htmlNotesTab() : ''}
       </main>
-      ${htmlRemoveGuestModal()}`;
+      ${htmlRemoveGuestModal()}
+      ${htmlConfirmDeleteVisitModal()}`;
   }
 
   function htmlGeneralInfo() {
@@ -568,6 +588,7 @@
       return `${items}
         <div class="add-visit-form">
           <input type="text" id="av-name-${dateKey}" class="guest-input" placeholder="שם המבקר" style="width:100%">
+          <p style="font-size:12px;font-weight:500;color:#52525b;margin-top:2px">שעת הביקור</p>
           <div style="display:flex;gap:8px;align-items:center;direction:ltr">
             <select id="av-hour-${dateKey}" class="visitor-select" style="flex:1;text-align:center">
               <option value="">שעה</option>
@@ -809,7 +830,13 @@
       if (name && hour && min !== '') addVisit(dk, name, `${hour}:${min}`);
     }));
     document.querySelectorAll('[data-cancel-visit]').forEach(b => b.addEventListener('click', () => { s.addingVisit=null; render(); }));
-    document.querySelectorAll('[data-del-visit]').forEach(b => b.addEventListener('click', () => deleteVisit(b.dataset.delVisit)));
+    document.querySelectorAll('[data-del-visit]').forEach(b => b.addEventListener('click', () => {
+      const v = s.visits.find(v=>v.id===b.dataset.delVisit);
+      if (v) { s.confirmDeleteVisit=v; render(); }
+    }));
+    document.getElementById('cdv-confirm')?.addEventListener('click', () => { if (s.confirmDeleteVisit) deleteVisit(s.confirmDeleteVisit.id); });
+    document.getElementById('cdv-cancel')?.addEventListener('click', () => { s.confirmDeleteVisit=null; render(); });
+    document.getElementById('cdv-overlay')?.addEventListener('click', e => { if (e.target.id==='cdv-overlay') { s.confirmDeleteVisit=null; render(); } });
 
     document.getElementById('nb')?.addEventListener('click', () => { s.addingNote=true; render(); setTimeout(()=>document.getElementById('nt')?.focus(),0); });
     document.getElementById('ns')?.addEventListener('click', () => {

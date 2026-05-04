@@ -615,7 +615,7 @@
             <span class="visit-time-badge">${esc(v.visit_time)}</span>
             <span class="visit-name">${esc(v.name)}</span>
             <button class="visit-action-btn" data-edit-visit="${v.id}">עריכה</button>
-            <button class="visit-action-btn visit-cal-btn" data-cal-visit="${v.id}">הוסף ליומן</button>
+            <button class="visit-action-btn" data-cal-visit="${v.id}">הוסף ליומן</button>
           </div>`).join('')}</div>`
       : '';
     if (s.addingVisit === dateKey) {

@@ -1,4 +1,4 @@
-const V = '1746444000';
+const V = '1746450000';
 
 self.addEventListener('install', () => self.skipWaiting());
 
@@ -10,5 +10,9 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  e.respondWith(fetch(e.request));
+  if (e.request.destination === 'document' || e.request.url.endsWith('.html') || e.request.url.endsWith('.js')) {
+    e.respondWith(fetch(e.request, { cache: 'no-store' }));
+  } else {
+    e.respondWith(fetch(e.request));
+  }
 });

@@ -568,7 +568,20 @@
       return `${items}
         <div class="add-visit-form">
           <input type="text" id="av-name-${dateKey}" class="guest-input" placeholder="שם המבקר" style="width:100%">
-          <input type="time" id="av-time-${dateKey}" class="time-input" step="900">
+          <div style="display:flex;gap:8px;align-items:center;direction:ltr">
+            <select id="av-hour-${dateKey}" class="visitor-select" style="flex:1;text-align:center">
+              <option value="">שעה</option>
+              ${Array.from({length:24},(_,i)=>`<option value="${String(i).padStart(2,'0')}">${String(i).padStart(2,'0')}</option>`).join('')}
+            </select>
+            <span style="font-size:16px;font-weight:600;color:#27272a;flex-shrink:0">:</span>
+            <select id="av-min-${dateKey}" class="visitor-select" style="flex:1;text-align:center">
+              <option value="">דקות</option>
+              <option value="00">00</option>
+              <option value="15">15</option>
+              <option value="30">30</option>
+              <option value="45">45</option>
+            </select>
+          </div>
           <div class="btn-row">
             <button class="btn-primary green" data-save-visit="${dateKey}">הוסף</button>
             <button class="btn-secondary" data-cancel-visit="${dateKey}">ביטול</button>
@@ -790,9 +803,10 @@
     }));
     document.querySelectorAll('[data-save-visit]').forEach(b => b.addEventListener('click', () => {
       const dk=b.dataset.saveVisit;
-      const name=document.getElementById(`av-name-${dk}`)?.value;
-      const time=document.getElementById(`av-time-${dk}`)?.value;
-      if (name && time) addVisit(dk, name, time);
+      const name=document.getElementById(`av-name-${dk}`)?.value.trim();
+      const hour=document.getElementById(`av-hour-${dk}`)?.value;
+      const min=document.getElementById(`av-min-${dk}`)?.value;
+      if (name && hour && min !== '') addVisit(dk, name, `${hour}:${min}`);
     }));
     document.querySelectorAll('[data-cancel-visit]').forEach(b => b.addEventListener('click', () => { s.addingVisit=null; render(); }));
     document.querySelectorAll('[data-del-visit]').forEach(b => b.addEventListener('click', () => deleteVisit(b.dataset.delVisit)));

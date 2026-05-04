@@ -191,8 +191,10 @@
     .visit-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: #f4f4f5; border: 1px solid #e4e4e7; border-radius: 10px; }
     .visit-time-badge { font-size: 13px; font-family: monospace; color: #047857; background: #d1fae5; border: 1px solid #6ee7b7; border-radius: 6px; padding: 2px 7px; flex-shrink: 0; direction: ltr; unicode-bidi: embed; }
     .visit-name { flex: 1; font-size: 14px; color: #18181b; font-weight: 500; }
-    .visit-del-btn { background: none; border: none; cursor: pointer; font-size: 13px; color: #d4d4d8; transition: color 0.15s; padding: 0; flex-shrink: 0; font-family: inherit; }
-    .visit-del-btn:hover { color: #ef4444; }
+    .visit-action-btn { background: none; border: 1px solid #d4d4d8; cursor: pointer; font-size: 12px; color: #52525b; border-radius: 6px; padding: 3px 8px; flex-shrink: 0; font-family: inherit; transition: background 0.15s; }
+    .visit-action-btn:hover { background: #f4f4f5; }
+    .visit-cal-btn { color: #047857; border-color: #6ee7b7; }
+    .visit-cal-btn:hover { background: #ecfdf5; }
     .add-visit-btn { width: 100%; padding: 9px; border: 2px dashed #d4d4d8; border-radius: 10px; background: transparent; font-size: 13px; color: #27272a; cursor: pointer; font-family: inherit; transition: border-color 0.15s; text-align: center; }
     .add-visit-btn:hover { border-color: #a1a1aa; }
     .add-visit-form { background: #f0fdf4; border: 1px solid #6ee7b7; border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
@@ -227,7 +229,7 @@
   const s = {
     tab: 'visits',
     schedule: {}, notes: [], dayNotes: {}, tasks: [],
-    visits: [], addingVisit: null, confirmDeleteVisit: null,
+    visits: [], addingVisit: null, editingVisit: null,
     generalInfo: '', editingGeneralInfo: false,
     loading: true,
     addingNote: false, addingTask: false,
@@ -313,8 +315,35 @@
   }
 
   async function deleteVisit(id) {
-    s.visits = s.visits.filter(v=>v.id!==id); s.confirmDeleteVisit=null; render();
+    s.visits = s.visits.filter(v=>v.id!==id); s.editingVisit=null; render();
     await db.from('visits').delete().eq('id', id);
+  }
+
+  async function updateVisit(id, name, visitTime) {
+    const idx = s.visits.findIndex(v=>v.id===id);
+    if (idx<0) return;
+    s.visits[idx] = {...s.visits[idx], name, visit_time:visitTime};
+    s.editingVisit=null; render();
+    await db.from('visits').update({name, visit_time:visitTime}).eq('id', id);
+  }
+
+  function addVisitToCalendar(v) {
+    const dt = v.date_key.replace(/-/g,'');
+    const [hh,mm] = v.visit_time.split(':');
+    const endH = (parseInt(hh,10)+1).toString().padStart(2,'0');
+    const ics = [
+      'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//ima-visits//HE','BEGIN:VEVENT',
+      `UID:${v.id}@ima-visits`,
+      `DTSTART;TZID=Asia/Jerusalem:${dt}T${hh}${mm}00`,
+      `DTEND;TZID=Asia/Jerusalem:${dt}T${endH}${mm}00`,
+      `SUMMARY:ביקור אמא – ${v.name}`,
+      'END:VEVENT','END:VCALENDAR',
+    ].join('\r\n');
+    const blob = new Blob([ics],{type:'text/calendar;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href=url; a.download=`ביקור-${v.date_key}.ics`; a.click();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
   }
 
   async function removeGuest(dateKey, slotKey, idx) {
@@ -502,20 +531,23 @@
     </div>`;
   }
 
-  function htmlConfirmDeleteVisitModal() {
-    if (!s.confirmDeleteVisit) return '';
-    const v = s.confirmDeleteVisit;
+  function htmlEditVisitModal() {
+    if (!s.editingVisit) return '';
+    const v = s.editingVisit;
     return `<div class="modal-overlay" id="cdv-overlay">
       <div class="modal-box">
-        <p class="modal-title">הסרת ביקור</p>
-        <p style="text-align:center;font-size:14px;color:#52525b">האם תרצה להסיר את הביקור?</p>
-        <div style="background:#f4f4f5;border-radius:10px;padding:10px 14px;text-align:center;display:flex;flex-direction:column;gap:4px">
-          <span style="font-size:15px;font-weight:600;color:#18181b">${esc(v.name)}</span>
-          <span style="font-size:13px;color:#52525b;direction:ltr;unicode-bidi:embed">${esc(v.visit_time)}</span>
+        <p class="modal-title">עריכת ביקור</p>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <input type="text" id="ev-name" class="guest-input" value="${esc(v.name)}" placeholder="שם המבקר" style="width:100%;box-sizing:border-box">
+          <div class="time-wrapper">
+            <input type="time" id="ev-time" class="time-input" value="${esc(v.visit_time)}" min="07:00" max="21:00" step="900">
+            <span class="time-hint" id="ev-hint" style="${v.visit_time?'display:none':''}">שעת ביקור</span>
+          </div>
         </div>
-        <div class="btn-row">
-          <button class="btn-danger" id="cdv-confirm">הסר</button>
+        <div class="btn-row" style="margin-top:10px">
+          <button class="btn-primary green" id="cdv-save">שמור</button>
           <button class="btn-secondary" id="cdv-cancel">ביטול</button>
+          <button class="btn-danger" id="cdv-confirm">מחק</button>
         </div>
       </div>
     </div>`;
@@ -544,7 +576,7 @@
         ${!s.loading && s.tab==='notes'   ? htmlNotesTab() : ''}
       </main>
       ${htmlRemoveGuestModal()}
-      ${htmlConfirmDeleteVisitModal()}`;
+      ${htmlEditVisitModal()}`;
   }
 
   function htmlGeneralInfo() {
@@ -582,7 +614,8 @@
           <div class="visit-item">
             <span class="visit-time-badge">${esc(v.visit_time)}</span>
             <span class="visit-name">${esc(v.name)}</span>
-            <button class="visit-del-btn" data-del-visit="${v.id}">✕</button>
+            <button class="visit-action-btn" data-edit-visit="${v.id}">עריכה</button>
+            <button class="visit-action-btn visit-cal-btn" data-cal-visit="${v.id}">הוסף ליומן</button>
           </div>`).join('')}</div>`
       : '';
     if (s.addingVisit === dateKey) {
@@ -829,13 +862,29 @@
       inp.addEventListener('input', update);
       update();
     });
-    document.querySelectorAll('[data-del-visit]').forEach(b => b.addEventListener('click', () => {
-      const v = s.visits.find(v=>v.id===b.dataset.delVisit);
-      if (v) { s.confirmDeleteVisit=v; render(); }
+    document.querySelectorAll('[data-edit-visit]').forEach(b => b.addEventListener('click', () => {
+      const v = s.visits.find(v=>v.id===b.dataset.editVisit);
+      if (v) { s.editingVisit=v; render(); }
     }));
-    document.getElementById('cdv-confirm')?.addEventListener('click', () => { if (s.confirmDeleteVisit) deleteVisit(s.confirmDeleteVisit.id); });
-    document.getElementById('cdv-cancel')?.addEventListener('click', () => { s.confirmDeleteVisit=null; render(); });
-    document.getElementById('cdv-overlay')?.addEventListener('click', e => { if (e.target.id==='cdv-overlay') { s.confirmDeleteVisit=null; render(); } });
+    document.querySelectorAll('[data-cal-visit]').forEach(b => b.addEventListener('click', () => {
+      const v = s.visits.find(v=>v.id===b.dataset.calVisit);
+      if (v) addVisitToCalendar(v);
+    }));
+    document.getElementById('cdv-save')?.addEventListener('click', () => {
+      if (!s.editingVisit) return;
+      const name = document.getElementById('ev-name')?.value.trim();
+      const time = document.getElementById('ev-time')?.value;
+      if (name && time) updateVisit(s.editingVisit.id, name, time);
+    });
+    document.getElementById('cdv-confirm')?.addEventListener('click', () => { if (s.editingVisit) deleteVisit(s.editingVisit.id); });
+    document.getElementById('cdv-cancel')?.addEventListener('click', () => { s.editingVisit=null; render(); });
+    document.getElementById('cdv-overlay')?.addEventListener('click', e => { if (e.target.id==='cdv-overlay') { s.editingVisit=null; render(); } });
+    const evTime = document.getElementById('ev-time');
+    const evHint = document.getElementById('ev-hint');
+    if (evTime && evHint) {
+      evTime.addEventListener('focus', () => { evHint.style.display='none'; });
+      evTime.addEventListener('blur', () => { evHint.style.display = evTime.value ? 'none' : ''; });
+    }
 
     document.getElementById('nb')?.addEventListener('click', () => { s.addingNote=true; render(); setTimeout(()=>document.getElementById('nt')?.focus(),0); });
     document.getElementById('ns')?.addEventListener('click', () => {

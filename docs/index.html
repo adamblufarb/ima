@@ -199,6 +199,8 @@
     .add-visit-form { background: #f0fdf4; border: 1px solid #6ee7b7; border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
     .time-input { width: 100%; background: #ffffff; border: 1px solid #e4e4e7; border-radius: 8px; padding: 6px 10px; font-size: 14px; color: #27272a; font-family: inherit; outline: none; direction: ltr; -webkit-appearance: none; appearance: none; height: 36px; }
     .time-input:focus { border-color: #34d399; }
+    .time-wrapper { position: relative; }
+    .time-hint { position: absolute; top: 0; bottom: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: center; background: #ffffff; border-radius: 8px; font-size: 14px; color: #a1a1aa; pointer-events: none; border: 1px solid #e4e4e7; }
     .visits-list { display: flex; flex-direction: column; gap: 6px; }
 
     /* Drag and drop */
@@ -588,7 +590,10 @@
       return `${items}
         <div class="add-visit-form">
           <input type="text" id="av-name-${dateKey}" class="guest-input" placeholder="שם המבקר" style="width:100%">
-          <input type="time" id="av-time-${dateKey}" class="time-input" min="07:00" max="21:00" placeholder="שעת ביקור">
+          <div class="time-wrapper">
+            <input type="time" id="av-time-${dateKey}" class="time-input" min="07:00" max="21:00">
+            <span class="time-hint" id="av-hint-${dateKey}">שעת ביקור</span>
+          </div>
           <div class="btn-row">
             <button class="btn-primary green" data-save-visit="${dateKey}">הוסף</button>
             <button class="btn-secondary" data-cancel-visit="${dateKey}">ביטול</button>
@@ -815,6 +820,14 @@
       if (name && time) addVisit(dk, name, time);
     }));
     document.querySelectorAll('[data-cancel-visit]').forEach(b => b.addEventListener('click', () => { s.addingVisit=null; render(); }));
+    document.querySelectorAll('.time-input').forEach(inp => {
+      const hint = document.getElementById('av-hint-' + inp.id.replace('av-time-', ''));
+      if (!hint) return;
+      const update = () => { hint.style.display = inp.value ? 'none' : ''; };
+      inp.addEventListener('change', update);
+      inp.addEventListener('input', update);
+      update();
+    });
     document.querySelectorAll('[data-del-visit]').forEach(b => b.addEventListener('click', () => {
       const v = s.visits.find(v=>v.id===b.dataset.delVisit);
       if (v) { s.confirmDeleteVisit=v; render(); }

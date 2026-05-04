@@ -194,8 +194,8 @@
     .visit-name { flex: 1; font-size: 14px; color: #18181b; font-weight: 500; }
     .visit-del-btn { background: none; border: none; cursor: pointer; font-size: 13px; color: #d4d4d8; transition: color 0.15s; padding: 0; flex-shrink: 0; font-family: inherit; }
     .visit-del-btn:hover { color: #ef4444; }
-    .add-visit-btn { width: 100%; padding: 9px; border: 2px dashed #6ee7b7; border-radius: 10px; background: transparent; font-size: 13px; color: #059669; cursor: pointer; font-family: inherit; transition: border-color 0.15s, color 0.15s; text-align: center; }
-    .add-visit-btn:hover { border-color: #059669; }
+    .add-visit-btn { width: 100%; padding: 9px; border: 2px dashed #d4d4d8; border-radius: 10px; background: transparent; font-size: 13px; color: #27272a; cursor: pointer; font-family: inherit; transition: border-color 0.15s; text-align: center; }
+    .add-visit-btn:hover { border-color: #a1a1aa; }
     .add-visit-form { background: #f0fdf4; border: 1px solid #6ee7b7; border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
     .time-input { width: 100%; background: #ffffff; border: 1px solid #e4e4e7; border-radius: 8px; padding: 8px 12px; font-size: 14px; color: #27272a; font-family: inherit; outline: none; direction: ltr; }
     .time-input:focus { border-color: #34d399; }
@@ -567,11 +567,8 @@
     if (s.addingVisit === dateKey) {
       return `${items}
         <div class="add-visit-form">
-          <select class="author-select" id="av-name-${dateKey}" dir="rtl">
-            <option value="">— מי מבקר? —</option>
-            ${PEOPLE.map(p=>`<option>${p}</option>`).join('')}
-          </select>
-          <input type="time" id="av-time-${dateKey}" class="time-input">
+          <input type="text" id="av-name-${dateKey}" class="guest-input" placeholder="שם המבקר" style="width:100%">
+          <input type="time" id="av-time-${dateKey}" class="time-input" step="900">
           <div class="btn-row">
             <button class="btn-primary green" data-save-visit="${dateKey}">הוסף</button>
             <button class="btn-secondary" data-cancel-visit="${dateKey}">ביטול</button>

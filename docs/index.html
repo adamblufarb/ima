@@ -197,7 +197,7 @@
     .add-visit-btn { width: 100%; padding: 9px; border: 2px dashed #d4d4d8; border-radius: 10px; background: transparent; font-size: 13px; color: #27272a; cursor: pointer; font-family: inherit; transition: border-color 0.15s; text-align: center; }
     .add-visit-btn:hover { border-color: #a1a1aa; }
     .add-visit-form { background: #f0fdf4; border: 1px solid #6ee7b7; border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
-    .time-input { width: 100%; background: #ffffff; border: 1px solid #e4e4e7; border-radius: 8px; padding: 8px 12px; font-size: 14px; color: #27272a; font-family: inherit; outline: none; direction: ltr; }
+    .time-input { width: 100%; background: #ffffff; border: 1px solid #e4e4e7; border-radius: 8px; padding: 6px 10px; font-size: 14px; color: #27272a; font-family: inherit; outline: none; direction: ltr; -webkit-appearance: none; appearance: none; height: 36px; }
     .time-input:focus { border-color: #34d399; }
     .visits-list { display: flex; flex-direction: column; gap: 6px; }
 
@@ -588,7 +588,7 @@
       return `${items}
         <div class="add-visit-form">
           <input type="text" id="av-name-${dateKey}" class="guest-input" placeholder="שם המבקר" style="width:100%">
-          <input type="time" id="av-time-${dateKey}" class="time-input" step="900">
+          <input type="time" id="av-time-${dateKey}" class="time-input" min="07:00" max="21:00" placeholder="שעת ביקור">
           <div class="btn-row">
             <button class="btn-primary green" data-save-visit="${dateKey}">הוסף</button>
             <button class="btn-secondary" data-cancel-visit="${dateKey}">ביטול</button>

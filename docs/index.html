@@ -188,6 +188,19 @@
     .add-comment-btn:hover { color: #f97316; }
     .comment-form { border-top: 1px solid #f4f4f5; padding-top: 10px; margin-top: 6px; display: flex; flex-direction: column; gap: 8px; }
 
+    /* Visit items (new system) */
+    .visit-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: #f4f4f5; border: 1px solid #e4e4e7; border-radius: 10px; }
+    .visit-time-badge { font-size: 13px; font-family: monospace; color: #047857; background: #d1fae5; border: 1px solid #6ee7b7; border-radius: 6px; padding: 2px 7px; flex-shrink: 0; direction: ltr; unicode-bidi: embed; }
+    .visit-name { flex: 1; font-size: 14px; color: #18181b; font-weight: 500; }
+    .visit-del-btn { background: none; border: none; cursor: pointer; font-size: 13px; color: #d4d4d8; transition: color 0.15s; padding: 0; flex-shrink: 0; font-family: inherit; }
+    .visit-del-btn:hover { color: #ef4444; }
+    .add-visit-btn { width: 100%; padding: 9px; border: 2px dashed #6ee7b7; border-radius: 10px; background: transparent; font-size: 13px; color: #059669; cursor: pointer; font-family: inherit; transition: border-color 0.15s, color 0.15s; text-align: center; }
+    .add-visit-btn:hover { border-color: #059669; }
+    .add-visit-form { background: #f0fdf4; border: 1px solid #6ee7b7; border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+    .time-input { width: 100%; background: #ffffff; border: 1px solid #e4e4e7; border-radius: 8px; padding: 8px 12px; font-size: 14px; color: #27272a; font-family: inherit; outline: none; direction: ltr; }
+    .time-input:focus { border-color: #34d399; }
+    .visits-list { display: flex; flex-direction: column; gap: 6px; }
+
     /* Drag and drop */
     .drag-handle { color: #d4d4d8; font-size: 18px; cursor: grab; flex-shrink: 0; align-self: center; padding: 0 2px; touch-action: none; user-select: none; }
     .drag-handle:active { cursor: grabbing; }
@@ -213,6 +226,7 @@
   const s = {
     tab: 'visits',
     schedule: {}, notes: [], dayNotes: {}, tasks: [],
+    visits: [], addingVisit: null,
     generalInfo: '', editingGeneralInfo: false,
     loading: true,
     addingNote: false, addingTask: false,
@@ -236,16 +250,18 @@
   }
 
   async function loadAll() {
-    const [schRes, notRes, dnRes, taskRes, commRes] = await Promise.all([
+    const [schRes, notRes, dnRes, taskRes, commRes, visitRes] = await Promise.all([
       db.from('schedule').select('*'),
       db.from('notes').select('*').order('created_at'),
       db.from('day_notes').select('*'),
       db.from('tasks').select('*').order('created_at'),
       db.from('note_comments').select('*').order('created_at'),
+      db.from('visits').select('*'),
     ]);
     if (schRes.data)  s.schedule = rowsToSchedule(schRes.data);
     if (notRes.data)  s.notes    = notRes.data;
     if (taskRes.data) s.tasks    = taskRes.data;
+    if (visitRes.data) s.visits  = visitRes.data;
     s.dayNotes = {};
     s.generalInfo = '';
     for (const r of dnRes.data || []) {
@@ -287,6 +303,17 @@
     render();
     if (t) { await db.from('day_notes').upsert({ date_key:'_info_', note:t }); }
     else   { await db.from('day_notes').delete().eq('date_key', '_info_'); }
+  }
+
+  async function addVisit(dateKey, name, visitTime) {
+    const v = { id:Date.now().toString(), date_key:dateKey, name, visit_time:visitTime, created_at:new Date().toISOString() };
+    s.visits.push(v); s.addingVisit=null; render();
+    await db.from('visits').insert(v);
+  }
+
+  async function deleteVisit(id) {
+    s.visits = s.visits.filter(v=>v.id!==id); render();
+    await db.from('visits').delete().eq('id', id);
   }
 
   async function removeGuest(dateKey, slotKey, idx) {
@@ -525,6 +552,35 @@
     return dates.map(k=>htmlDay(k,true)).join('');
   }
 
+  function htmlDayVisits(dateKey) {
+    const dayVisits = s.visits
+      .filter(v => v.date_key === dateKey)
+      .sort((a,b) => a.visit_time.localeCompare(b.visit_time));
+    const items = dayVisits.length
+      ? `<div class="visits-list">${dayVisits.map(v=>`
+          <div class="visit-item">
+            <span class="visit-time-badge">${esc(v.visit_time)}</span>
+            <span class="visit-name">${esc(v.name)}</span>
+            <button class="visit-del-btn" data-del-visit="${v.id}">✕</button>
+          </div>`).join('')}</div>`
+      : '';
+    if (s.addingVisit === dateKey) {
+      return `${items}
+        <div class="add-visit-form">
+          <select class="author-select" id="av-name-${dateKey}" dir="rtl">
+            <option value="">— מי מבקר? —</option>
+            ${PEOPLE.map(p=>`<option>${p}</option>`).join('')}
+          </select>
+          <input type="time" id="av-time-${dateKey}" class="time-input">
+          <div class="btn-row">
+            <button class="btn-primary green" data-save-visit="${dateKey}">הוסף</button>
+            <button class="btn-secondary" data-cancel-visit="${dateKey}">ביטול</button>
+          </div>
+        </div>`;
+    }
+    return `${items}<button class="add-visit-btn" data-add-visit="${dateKey}">+ הוסף ביקור</button>`;
+  }
+
   function htmlDay(k, ro) {
     const day     = getDay(k);
     const dayNote = s.dayNotes[k] || '';
@@ -553,7 +609,7 @@
         ${!ro&&!editing&&!dayNote?`<button class="day-note-add-btn" data-edit-day="${k}">+ הערה</button>`:''}
       </div>
       ${noteSection}
-      ${SLOT_KEYS.map(sk=>htmlSlot(k,sk,day[sk]||[],ro)).join('')}
+      ${ro ? SLOT_KEYS.map(sk=>htmlSlot(k,sk,day[sk]||[],ro)).join('') : htmlDayVisits(k)}
     </div>`;
   }
 
@@ -719,7 +775,7 @@
 
   function bind() {
     document.querySelectorAll('[data-tab]').forEach(b =>
-      b.addEventListener('click', () => { s.tab=b.dataset.tab; s.addingNote=false; s.addingTask=false; s.editingNoteId=null; s.editingDayNote=null; render(); }));
+      b.addEventListener('click', () => { s.tab=b.dataset.tab; s.addingNote=false; s.addingTask=false; s.editingNoteId=null; s.editingDayNote=null; s.addingVisit=null; render(); }));
 
     document.querySelectorAll('.visitor-select').forEach(sel =>
       sel.addEventListener('change', () => setVisitor(sel.dataset.date, sel.dataset.slot, +sel.dataset.idx, sel.value)));
@@ -731,6 +787,18 @@
       saveDayNote(b.dataset.saveDay, document.getElementById(`dn-${b.dataset.saveDay}`)?.value||'')));
     document.querySelectorAll('[data-cancel-day]').forEach(b => b.addEventListener('click', () => { s.editingDayNote=null; render(); }));
     document.querySelectorAll('[data-clear-day]').forEach(b => b.addEventListener('click', () => saveDayNote(b.dataset.clearDay,'')));
+
+    document.querySelectorAll('[data-add-visit]').forEach(b => b.addEventListener('click', () => {
+      s.addingVisit=b.dataset.addVisit; render(); setTimeout(()=>document.getElementById(`av-name-${s.addingVisit}`)?.focus(),0);
+    }));
+    document.querySelectorAll('[data-save-visit]').forEach(b => b.addEventListener('click', () => {
+      const dk=b.dataset.saveVisit;
+      const name=document.getElementById(`av-name-${dk}`)?.value;
+      const time=document.getElementById(`av-time-${dk}`)?.value;
+      if (name && time) addVisit(dk, name, time);
+    }));
+    document.querySelectorAll('[data-cancel-visit]').forEach(b => b.addEventListener('click', () => { s.addingVisit=null; render(); }));
+    document.querySelectorAll('[data-del-visit]').forEach(b => b.addEventListener('click', () => deleteVisit(b.dataset.delVisit)));
 
     document.getElementById('nb')?.addEventListener('click', () => { s.addingNote=true; render(); setTimeout(()=>document.getElementById('nt')?.focus(),0); });
     document.getElementById('ns')?.addEventListener('click', () => {
@@ -858,7 +926,7 @@
     s.loading=false;
     render();
     setInterval(async () => {
-      const editing = s.addingNote || s.addingTask || s.editingNoteId || s.editingDayNote || s.editingTaskId || s.addingCommentToNote || s.editingGeneralInfo;
+      const editing = s.addingNote || s.addingTask || s.editingNoteId || s.editingDayNote || s.editingTaskId || s.addingCommentToNote || s.editingGeneralInfo || s.addingVisit;
       await loadAll();
       if (!editing) render();
     }, 15000);
